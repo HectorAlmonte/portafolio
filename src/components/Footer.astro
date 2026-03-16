@@ -1,4 +1,13 @@
 ---
+import { type Lang } from '../i18n/translations';
+import { useTranslations } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
 ---
 
 <footer class="border-t border-terminal-border mt-20">
@@ -9,7 +18,7 @@
     <div class="flex items-center gap-4">
       <a href="https://github.com" target="_blank" rel="noopener" class="hover:text-terminal-text transition-colors">GitHub</a>
       <a href="https://linkedin.com" target="_blank" rel="noopener" class="hover:text-terminal-text transition-colors">LinkedIn</a>
-      <a href="/contact" class="hover:text-terminal-green transition-colors">Contact</a>
+      <a href={`/${lang}/contact`} class="hover:text-terminal-green transition-colors">{t.footer.contact}</a>
     </div>
   </div>
 </footer>

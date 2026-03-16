@@ -1,38 +1,66 @@
 ---
+import { type Lang } from '../i18n/translations';
+import { useTranslations, getAlternateLang, getLocalizedPath } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const alternateLang = getAlternateLang(lang);
+const currentPath = Astro.url.pathname;
+const alternatePath = getLocalizedPath(currentPath, alternateLang);
+
 const links = [
-  { href: '/', label: '~' },
-  { href: '/about', label: 'about' },
-  { href: '/projects', label: 'projects' },
-  { href: '/contact', label: 'contact' },
+  { href: `/${lang}/`, label: t.nav.home },
+  { href: `/${lang}/about`, label: t.nav.about },
+  { href: `/${lang}/projects`, label: t.nav.projects },
+  { href: `/${lang}/contact`, label: t.nav.contact },
 ];
 
-const currentPath = Astro.url.pathname;
+// Determine active link by comparing path segments
+const pathSegments = currentPath.split('/').filter(Boolean);
+const currentPage = pathSegments[1] ?? '';
 ---
 
 <nav class="sticky top-0 z-50 border-b border-terminal-border bg-terminal-bg/90 backdrop-blur-sm">
   <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
     <!-- Logo -->
-    <a href="/" class="flex items-center gap-2 group">
+    <a href={`/${lang}/`} class="flex items-center gap-2 group">
       <span class="text-terminal-green font-bold">hector</span>
       <span class="text-terminal-muted">@portfolio</span>
       <span class="text-terminal-green animate-blink">▋</span>
     </a>
 
-    <!-- Links -->
+    <!-- Links + Lang Switcher -->
     <div class="flex items-center gap-1">
-      {links.map(link => (
-        <a
-          href={link.href}
-          class={`px-3 py-1.5 rounded text-sm transition-colors ${
-            currentPath === link.href
-              ? 'text-terminal-green bg-terminal-green/10'
-              : 'text-terminal-muted hover:text-terminal-text hover:bg-terminal-surface'
-          }`}
-        >
-          <span class="text-terminal-muted">{currentPath === link.href ? '>' : ''}</span>
-          {link.label}
-        </a>
-      ))}
+      {links.map(link => {
+        const linkPage = link.href.split('/').filter(Boolean)[1] ?? '';
+        const isActive = currentPage === linkPage || (currentPage === '' && linkPage === '');
+        return (
+          <a
+            href={link.href}
+            class={`px-3 py-1.5 rounded text-sm transition-colors ${
+              isActive
+                ? 'text-terminal-green bg-terminal-green/10'
+                : 'text-terminal-muted hover:text-terminal-text hover:bg-terminal-surface'
+            }`}
+          >
+            <span class="text-terminal-muted">{isActive ? '>' : ''}</span>
+            {link.label}
+          </a>
+        );
+      })}
+
+      <!-- Language switcher -->
+      <a
+        href={alternatePath}
+        title={alternateLang === 'en' ? 'Switch to English' : 'Cambiar a Español'}
+        class="ml-3 px-2.5 py-1 rounded border border-terminal-border text-xs text-terminal-muted hover:text-terminal-green hover:border-terminal-green transition-colors font-mono uppercase tracking-wider"
+      >
+        {alternateLang}
+      </a>
     </div>
   </div>
 </nav>

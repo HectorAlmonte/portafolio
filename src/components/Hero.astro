@@ -1,4 +1,14 @@
 ---
+import { type Lang } from '../i18n/translations';
+import { useTranslations } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const bioLines = t.hero.bio.split('\n');
 ---
 
 <section class="max-w-5xl mx-auto px-6 py-24 min-h-[80vh] flex flex-col justify-center">
@@ -33,9 +43,9 @@
       </div>
 
       <div class="pl-4 text-terminal-muted leading-relaxed animate-[fadeIn_0.5s_ease_0.9s_forwards] opacity-0">
-        Construyo aplicaciones web modernas de alto rendimiento,<br />
-        desde la UI hasta la API. Apasionado por el código limpio<br />
-        y las buenas experiencias de usuario.
+        {bioLines.map((line, i) => (
+          <span>{line}{i < bioLines.length - 1 && <br />}</span>
+        ))}
       </div>
 
       <div class="flex gap-2 mt-4 animate-[fadeIn_0.5s_ease_1.2s_forwards] opacity-0">
@@ -61,16 +71,16 @@
   <!-- CTA buttons -->
   <div class="mt-8 flex flex-wrap gap-4 animate-[fadeIn_0.5s_ease_2.1s_forwards] opacity-0">
     <a
-      href="/projects"
+      href={`/${lang}/projects`}
       class="px-5 py-2.5 bg-terminal-green text-terminal-bg font-semibold rounded hover:bg-terminal-green/90 transition-colors text-sm"
     >
-      Ver proyectos →
+      {t.hero.viewProjects}
     </a>
     <a
-      href="/contact"
+      href={`/${lang}/contact`}
       class="px-5 py-2.5 border border-terminal-border text-terminal-muted hover:text-terminal-text hover:border-terminal-muted rounded transition-colors text-sm"
     >
-      Contactar
+      {t.hero.contact}
     </a>
   </div>
 </section>
