@@ -1,0 +1,38 @@
+---
+const links = [
+  { href: '/', label: '~' },
+  { href: '/about', label: 'about' },
+  { href: '/projects', label: 'projects' },
+  { href: '/contact', label: 'contact' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<nav class="sticky top-0 z-50 border-b border-terminal-border bg-terminal-bg/90 backdrop-blur-sm">
+  <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-2 group">
+      <span class="text-terminal-green font-bold">hector</span>
+      <span class="text-terminal-muted">@portfolio</span>
+      <span class="text-terminal-green animate-blink">▋</span>
+    </a>
+
+    <!-- Links -->
+    <div class="flex items-center gap-1">
+      {links.map(link => (
+        <a
+          href={link.href}
+          class={`px-3 py-1.5 rounded text-sm transition-colors ${
+            currentPath === link.href
+              ? 'text-terminal-green bg-terminal-green/10'
+              : 'text-terminal-muted hover:text-terminal-text hover:bg-terminal-surface'
+          }`}
+        >
+          <span class="text-terminal-muted">{currentPath === link.href ? '>' : ''}</span>
+          {link.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</nav>

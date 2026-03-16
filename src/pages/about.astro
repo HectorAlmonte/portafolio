@@ -1,0 +1,69 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const stack = {
+  Frontend: ['React', 'Astro', 'TypeScript', 'TailwindCSS', 'Next.js'],
+  Backend: ['Node.js', 'Express', 'PostgreSQL', 'Redis', 'REST / GraphQL'],
+  DevOps: ['Docker', 'GitHub Actions', 'Linux', 'Nginx'],
+  Tools: ['Git', 'VS Code', 'Figma', 'Postman'],
+};
+---
+
+<Layout title="About" description="Sobre mí — Hector, Full Stack Developer">
+  <section class="max-w-5xl mx-auto px-6 py-20">
+    <!-- Header -->
+    <div class="mb-12">
+      <p class="text-terminal-green text-sm mb-2">$ cat about.md</p>
+      <h1 class="text-3xl font-bold text-terminal-text">Sobre mí</h1>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-12">
+      <!-- Bio -->
+      <div class="space-y-6">
+        <div class="terminal-card">
+          <p class="text-terminal-muted text-sm leading-loose">
+            Soy un desarrollador Full Stack apasionado por construir productos digitales
+            que combinan buena arquitectura con gran experiencia de usuario.
+          </p>
+          <p class="text-terminal-muted text-sm leading-loose mt-4">
+            Me enfoco en escribir código limpio, escalable y bien documentado.
+            Disfruto tanto del lado del servidor como del cliente, y me gusta
+            automatizar todo lo que pueda con CI/CD y contenedores.
+          </p>
+        </div>
+
+        <!-- Status -->
+        <div class="terminal-card">
+          <p class="text-xs text-terminal-muted mb-3">// estado actual</p>
+          <div class="space-y-2 text-sm">
+            <div class="flex gap-3">
+              <span class="text-terminal-green">▶</span>
+              <span class="text-terminal-muted">Disponible para freelance</span>
+            </div>
+            <div class="flex gap-3">
+              <span class="text-terminal-green">▶</span>
+              <span class="text-terminal-muted">Buscando oportunidades full-time</span>
+            </div>
+            <div class="flex gap-3">
+              <span class="text-terminal-green">▶</span>
+              <span class="text-terminal-muted">Aprendiendo Rust y sistemas distribuidos</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stack -->
+      <div class="space-y-4">
+        <p class="text-xs text-terminal-muted">$ cat stack.json</p>
+        {Object.entries(stack).map(([category, items]) => (
+          <div class="terminal-card">
+            <p class="text-terminal-cyan text-xs mb-3">"{category}":</p>
+            <div class="flex flex-wrap gap-2">
+              {items.map(item => <span class="tag">{item}</span>)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

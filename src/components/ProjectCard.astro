@@ -1,0 +1,42 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  tech: string[];
+  github?: string;
+  demo?: string;
+  featured?: boolean;
+}
+
+const { title, description, tech, github, demo, featured = false } = Astro.props;
+---
+
+<article class={`terminal-card group hover:border-terminal-green/50 transition-colors ${featured ? 'border-terminal-green/30' : ''}`}>
+  <div class="flex items-start justify-between mb-3">
+    <div class="flex items-center gap-2">
+      {featured && <span class="text-terminal-yellow text-xs">★</span>}
+      <span class="text-terminal-muted text-xs">~/projects/</span>
+      <h3 class="text-terminal-text font-semibold group-hover:text-terminal-green transition-colors">
+        {title}
+      </h3>
+    </div>
+    <div class="flex gap-3 text-terminal-muted">
+      {github && (
+        <a href={github} target="_blank" rel="noopener" class="hover:text-terminal-text transition-colors text-xs" aria-label="GitHub">
+          [gh]
+        </a>
+      )}
+      {demo && (
+        <a href={demo} target="_blank" rel="noopener" class="hover:text-terminal-cyan transition-colors text-xs" aria-label="Demo">
+          [demo]
+        </a>
+      )}
+    </div>
+  </div>
+
+  <p class="text-terminal-muted text-sm leading-relaxed mb-4">{description}</p>
+
+  <div class="flex flex-wrap gap-2">
+    {tech.map(t => <span class="tag">{t}</span>)}
+  </div>
+</article>
