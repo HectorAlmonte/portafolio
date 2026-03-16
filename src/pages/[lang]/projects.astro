@@ -1,0 +1,48 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { languages, type Lang } from '../../i18n/translations';
+import { useTranslations } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return languages.map(lang => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params as { lang: Lang };
+const t = useTranslations(lang);
+
+const techStacks = [
+  ['React', 'Node.js', 'PostgreSQL', 'Docker', 'Socket.io'],
+  ['Next.js', 'Stripe', 'Prisma', 'TailwindCSS'],
+  ['Node.js', 'TypeScript', 'GitHub Actions'],
+  ['Node.js', 'Redis', 'RabbitMQ', 'Docker', 'Prometheus'],
+];
+
+const projects = t.projectData.map((p, i) => ({
+  ...p,
+  tech: techStacks[i],
+  github: '#',
+  demo: i !== 2 ? '#' : undefined,
+  featured: i === 0,
+}));
+---
+
+<Layout title={t.projects.title} description={t.meta.projects} lang={lang}>
+  <section class="max-w-5xl mx-auto px-6 py-20">
+    <!-- Header -->
+    <div class="mb-12">
+      <p class="text-terminal-green text-sm mb-2">{t.projects.cmd}</p>
+      <h1 class="text-3xl font-bold text-terminal-text">{t.projects.title}</h1>
+      <p class="text-terminal-muted mt-2 text-sm">
+        {t.projects.count(projects.length)}
+      </p>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid sm:grid-cols-2 gap-4">
+      {projects.map(project => (
+        <ProjectCard {...project} />
+      ))}
+    </div>
+  </section>
+</Layout>

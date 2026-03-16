@@ -1,0 +1,47 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Hero from '../../components/Hero.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { languages, type Lang } from '../../i18n/translations';
+import { useTranslations } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return languages.map(lang => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params as { lang: Lang };
+const t = useTranslations(lang);
+
+const featuredProjects = t.featuredProjects.map((p, i) => ({
+  ...p,
+  tech: i === 0
+    ? ['React', 'Node.js', 'PostgreSQL', 'Docker']
+    : ['Next.js', 'Stripe', 'Prisma', 'TailwindCSS'],
+  github: '#',
+  demo: '#',
+  featured: i === 0,
+}));
+---
+
+<Layout title="Home" description={t.meta.defaultDesc} lang={lang}>
+  <Hero lang={lang} />
+
+  <!-- Featured projects preview -->
+  <section class="max-w-5xl mx-auto px-6 pb-24">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <span class="text-terminal-green text-sm">$</span>
+        <span class="text-terminal-muted text-sm ml-2">{t.index.featuredCmd}</span>
+      </div>
+      <a href={`/${lang}/projects`} class="text-xs text-terminal-muted hover:text-terminal-cyan transition-colors">
+        {t.index.viewAll}
+      </a>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-4">
+      {featuredProjects.map(project => (
+        <ProjectCard {...project} />
+      ))}
+    </div>
+  </section>
+</Layout>

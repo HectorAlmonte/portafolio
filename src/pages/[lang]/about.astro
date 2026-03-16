@@ -1,0 +1,69 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { languages, type Lang } from '../../i18n/translations';
+import { useTranslations } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return languages.map(lang => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params as { lang: Lang };
+const t = useTranslations(lang);
+
+const stack = {
+  Frontend: ['React', 'Astro', 'TypeScript', 'TailwindCSS', 'Next.js'],
+  Backend: ['Node.js', 'Express', 'PostgreSQL', 'Redis', 'REST / GraphQL'],
+  DevOps: ['Docker', 'GitHub Actions', 'Linux', 'Nginx'],
+  Tools: ['Git', 'VS Code', 'Figma', 'Postman'],
+};
+---
+
+<Layout title={t.about.title} description={t.meta.about} lang={lang}>
+  <section class="max-w-5xl mx-auto px-6 py-20">
+    <!-- Header -->
+    <div class="mb-12">
+      <p class="text-terminal-green text-sm mb-2">{t.about.cmd}</p>
+      <h1 class="text-3xl font-bold text-terminal-text">{t.about.title}</h1>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-12">
+      <!-- Bio -->
+      <div class="space-y-6">
+        <div class="terminal-card">
+          <p class="text-terminal-muted text-sm leading-loose">
+            {t.about.bio1}
+          </p>
+          <p class="text-terminal-muted text-sm leading-loose mt-4">
+            {t.about.bio2}
+          </p>
+        </div>
+
+        <!-- Status -->
+        <div class="terminal-card">
+          <p class="text-xs text-terminal-muted mb-3">{t.about.statusLabel}</p>
+          <div class="space-y-2 text-sm">
+            {t.about.status.map(item => (
+              <div class="flex gap-3">
+                <span class="text-terminal-green">▶</span>
+                <span class="text-terminal-muted">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- Stack -->
+      <div class="space-y-4">
+        <p class="text-xs text-terminal-muted">{t.about.stackCmd}</p>
+        {Object.entries(stack).map(([category, items]) => (
+          <div class="terminal-card">
+            <p class="text-terminal-cyan text-xs mb-3">"{category}":</p>
+            <div class="flex flex-wrap gap-2">
+              {items.map(item => <span class="tag">{item}</span>)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
