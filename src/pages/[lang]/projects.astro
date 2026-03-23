@@ -12,37 +12,123 @@ const { lang } = Astro.params as { lang: Lang };
 const t = useTranslations(lang);
 
 const techStacks = [
-  ['React', 'Node.js', 'PostgreSQL', 'Docker', 'Socket.io'],
-  ['Next.js', 'Stripe', 'Prisma', 'TailwindCSS'],
-  ['Node.js', 'TypeScript', 'GitHub Actions'],
-  ['Node.js', 'Redis', 'RabbitMQ', 'Docker', 'Prometheus'],
+  ['Next.js 16', 'TypeScript', 'PostgreSQL', 'Prisma', 'PWA', 'Tesseract.js', 'Docker'],
+  ['Next.js 14', 'TypeScript', 'PostgreSQL', 'Prisma', 'NextAuth', 'Recharts', 'Docker'],
+  ['React', 'Node.js', 'SQL Server', 'ASP.NET', 'Mapbox'],
+  ['Node.js', 'TypeScript', 'SQL Server', 'REST API'],
+  ['Next.js 16', 'TypeScript', 'SQLite', 'Drizzle ORM', 'Zustand', 'shadcn/ui'],
 ];
 
 const projects = t.projectData.map((p, i) => ({
   ...p,
   tech: techStacks[i],
-  github: '#',
-  demo: i !== 2 ? '#' : undefined,
+  github: 'https://github.com/HectorAlmonte',
   featured: i === 0,
 }));
+
+const [featured, ...rest] = projects;
+
+const moreLabel = lang === 'es' ? 'Otros proyectos' : 'More projects';
+const moreCmd   = lang === 'es' ? '$ ls ~/projects/ --all' : '$ ls ~/projects/ --all';
 ---
 
 <Layout title={t.projects.title} description={t.meta.projects} lang={lang}>
   <section class="max-w-5xl mx-auto px-6 py-20">
+
     <!-- Header -->
-    <div class="mb-12">
-      <p class="text-terminal-green text-sm mb-2">{t.projects.cmd}</p>
-      <h1 class="text-3xl font-bold text-terminal-text">{t.projects.title}</h1>
-      <p class="text-terminal-muted mt-2 text-sm">
-        {t.projects.count(projects.length)}
-      </p>
+    <div class="mb-14" data-scroll>
+      <p class="text-terminal-green text-sm mb-3">{t.projects.cmd}</p>
+      <h1 class="text-4xl font-bold text-terminal-text">{t.projects.title}</h1>
+      <div class="mt-4 flex items-center gap-3">
+        <div class="h-px w-12 bg-terminal-green"></div>
+        <div class="h-px flex-1 bg-gradient-to-r from-terminal-green/40 to-transparent"></div>
+        <span class="text-xs text-terminal-muted">{t.projects.count(projects.length)}</span>
+      </div>
     </div>
 
-    <!-- Grid -->
-    <div class="grid sm:grid-cols-2 gap-4">
-      {projects.map(project => (
-        <ProjectCard {...project} />
-      ))}
+    <!-- Featured project — full width hero card -->
+    <div class="mb-12 proj-card" style="opacity:0; transform:translateY(20px)">
+      <div class="terminal-card border-terminal-green/40 relative overflow-hidden group hover:border-terminal-green/70 transition-colors">
+        <!-- Glowing top border -->
+        <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-terminal-green to-transparent"></div>
+
+        <div class="grid md:grid-cols-2 gap-8 items-start">
+          <div>
+            <div class="flex items-center gap-2 mb-4">
+              <span class="text-terminal-yellow text-sm">★</span>
+              <span class="text-xs text-terminal-muted">~/projects/</span>
+              <span class="text-xs border border-terminal-green/40 text-terminal-green rounded px-2 py-0.5">
+                {lang === 'es' ? 'Destacado' : 'Featured'}
+              </span>
+            </div>
+            <h2 class="text-xl font-bold text-terminal-text group-hover:text-terminal-green transition-colors glitch-on-hover mb-3">
+              {featured.title}
+            </h2>
+            <p class="text-terminal-muted text-sm leading-relaxed">
+              {featured.description}
+            </p>
+            <a
+              href={featured.github}
+              target="_blank" rel="noopener"
+              class="inline-flex items-center gap-2 mt-5 text-xs text-terminal-muted
+                     hover:text-terminal-green transition-colors border border-terminal-border
+                     hover:border-terminal-green/50 rounded px-3 py-1.5"
+            >
+              <span>⌥</span> {lang === 'es' ? 'Ver en GitHub' : 'View on GitHub'}
+            </a>
+          </div>
+
+          <div>
+            <p class="text-xs text-terminal-muted mb-3">// tech stack</p>
+            <div class="flex flex-wrap gap-2 mb-6">
+              {featured.tech.map(t => (
+                <span class="tag border-terminal-green/30 text-terminal-green/80">{t}</span>
+              ))}
+            </div>
+            <!-- Fake terminal output block -->
+            <div class="bg-terminal-bg rounded border border-terminal-border p-3 text-xs font-mono space-y-1">
+              <p><span class="text-terminal-green">▶</span> <span class="text-terminal-muted">pnpm dev</span></p>
+              <p class="text-terminal-muted pl-4">Database connected ✓</p>
+              <p class="text-terminal-muted pl-4">2 661 materiales cargados ✓</p>
+              <p class="text-terminal-muted pl-4">OCR engine ready ✓</p>
+              <p class="text-terminal-muted pl-4">PWA offline mode ✓</p>
+              <p><span class="text-terminal-green animate-blink">▋</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- Rest of projects -->
+    <div class="mb-6">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="text-xs text-terminal-muted">{moreCmd}</span>
+        <div class="h-px flex-1 bg-terminal-border"></div>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {rest.map((project, i) => (
+          <div class="proj-card" style="opacity:0; transform:translateY(20px)">
+            <ProjectCard {...project} />
+          </div>
+        ))}
+      </div>
+    </div>
+
   </section>
 </Layout>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  gsap.to('.proj-card', {
+    scrollTrigger: { trigger: '.proj-card', start: 'top 85%' },
+    opacity: 1,
+    y: 0,
+    duration: 0.55,
+    stagger: 0.12,
+    ease: 'power2.out',
+  });
+</script>

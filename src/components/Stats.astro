@@ -1,0 +1,83 @@
+---
+import { type Lang } from '../i18n/translations';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+const stats = lang === 'es'
+  ? [
+      { value: 4,  suffix: '+', label: 'años de experiencia',   icon: '⚡' },
+      { value: 5,  suffix: '+', label: 'proyectos desarrollados', icon: '🚀' },
+      { value: 10, suffix: '+', label: 'tecnologías dominadas', icon: '⚙️' },
+    ]
+  : [
+      { value: 4,  suffix: '+', label: 'years of experience',   icon: '⚡' },
+      { value: 5,  suffix: '+', label: 'projects developed',    icon: '🚀' },
+      { value: 10, suffix: '+', label: 'technologies mastered', icon: '⚙️' },
+    ];
+---
+
+<section class="max-w-5xl mx-auto px-6 pb-16">
+  <div class="grid grid-cols-3 gap-4" id="stats-grid">
+    {stats.map((s, i) => (
+      <div
+        class="terminal-card text-center group hover:border-terminal-green/50 transition-colors"
+        data-value={s.value}
+        data-suffix={s.suffix}
+        data-index={i}
+      >
+        <div class="text-2xl mb-2">{s.icon}</div>
+        <div class="text-3xl font-bold text-terminal-green stat-number">0{s.suffix}</div>
+        <div class="text-xs text-terminal-muted mt-1 leading-tight">{s.label}</div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const cards = document.querySelectorAll<HTMLElement>('#stats-grid [data-value]');
+
+  // Entrance animation
+  gsap.from(cards, {
+    scrollTrigger: {
+      trigger: '#stats-grid',
+      start: 'top 85%',
+    },
+    y: 30,
+    opacity: 0,
+    duration: 0.5,
+    stagger: 0.1,
+    ease: 'power2.out',
+  });
+
+  // Counter animation
+  ScrollTrigger.create({
+    trigger: '#stats-grid',
+    start: 'top 85%',
+    once: true,
+    onEnter: () => {
+      cards.forEach(card => {
+        const target = parseInt(card.dataset.value!);
+        const suffix = card.dataset.suffix ?? '';
+        const el = card.querySelector('.stat-number')!;
+        const obj = { val: 0 };
+
+        gsap.to(obj, {
+          val: target,
+          duration: 1.5,
+          ease: 'power2.out',
+          onUpdate: () => { el.textContent = Math.round(obj.val) + suffix; },
+          onComplete: () => { el.textContent = target + suffix; },
+        });
+      });
+    },
+  });
+</script>

@@ -8,33 +8,33 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = useTranslations(lang);
-const alternateLang = getAlternateLang(lang);
-const currentPath = Astro.url.pathname;
-const alternatePath = getLocalizedPath(currentPath, alternateLang);
+const alternateLang  = getAlternateLang(lang);
+const currentPath    = Astro.url.pathname;
+const alternatePath  = getLocalizedPath(currentPath, alternateLang);
 
 const links = [
-  { href: `/${lang}/`, label: t.nav.home },
-  { href: `/${lang}/about`, label: t.nav.about },
-  { href: `/${lang}/projects`, label: t.nav.projects },
+  { href: `/${lang}/`,        label: t.nav.home },
+  { href: `/${lang}/about`,   label: t.nav.about },
+  { href: `/${lang}/projects`,label: t.nav.projects },
   { href: `/${lang}/contact`, label: t.nav.contact },
 ];
 
-// Determine active link by comparing path segments
 const pathSegments = currentPath.split('/').filter(Boolean);
-const currentPage = pathSegments[1] ?? '';
+const currentPage  = pathSegments[1] ?? '';
 ---
 
 <nav class="sticky top-0 z-50 border-b border-terminal-border bg-terminal-bg/90 backdrop-blur-sm">
   <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+
     <!-- Logo -->
-    <a href={`/${lang}/`} class="flex items-center gap-2 group">
+    <a href={`/${lang}/`} class="flex items-center gap-2 group shrink-0">
       <span class="text-terminal-green font-bold">hector</span>
       <span class="text-terminal-muted">@portfolio</span>
       <span class="text-terminal-green animate-blink">▋</span>
     </a>
 
-    <!-- Links + Lang Switcher -->
-    <div class="flex items-center gap-1">
+    <!-- Desktop nav -->
+    <div class="hidden md:flex items-center gap-1">
       {links.map(link => {
         const linkPage = link.href.split('/').filter(Boolean)[1] ?? '';
         const isActive = currentPage === linkPage || (currentPage === '' && linkPage === '');
@@ -47,20 +47,99 @@ const currentPage = pathSegments[1] ?? '';
                 : 'text-terminal-muted hover:text-terminal-text hover:bg-terminal-surface'
             }`}
           >
-            <span class="text-terminal-muted">{isActive ? '>' : ''}</span>
+            {isActive && <span class="text-terminal-muted mr-0.5">{'>'}</span>}
             {link.label}
           </a>
         );
       })}
 
-      <!-- Language switcher -->
       <a
         href={alternatePath}
-        title={alternateLang === 'en' ? 'Switch to English' : 'Cambiar a Español'}
         class="ml-3 px-2.5 py-1 rounded border border-terminal-border text-xs text-terminal-muted hover:text-terminal-green hover:border-terminal-green transition-colors font-mono uppercase tracking-wider"
       >
         {alternateLang}
       </a>
+
+      <!-- CV download -->
+      <a
+        href="/hector-almonte-cv.pdf"
+        download
+        class="ml-2 px-3 py-1.5 rounded border border-terminal-green/50 text-terminal-green text-xs hover:bg-terminal-green hover:text-terminal-bg transition-colors font-mono"
+      >
+        ↓ CV
+      </a>
+    </div>
+
+    <!-- Mobile: lang + hamburger -->
+    <div class="flex md:hidden items-center gap-2">
+      <a
+        href={alternatePath}
+        class="px-2 py-1 rounded border border-terminal-border text-xs text-terminal-muted font-mono uppercase"
+      >
+        {alternateLang}
+      </a>
+      <button id="menu-btn" aria-label="Menu" class="p-2 text-terminal-muted hover:text-terminal-green transition-colors">
+        <svg id="icon-open"  width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6"  x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg id="icon-close" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="hidden"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="hidden md:hidden border-t border-terminal-border bg-terminal-bg">
+    <div class="max-w-5xl mx-auto px-6 py-4 flex flex-col gap-1">
+      {links.map(link => {
+        const linkPage = link.href.split('/').filter(Boolean)[1] ?? '';
+        const isActive = currentPage === linkPage || (currentPage === '' && linkPage === '');
+        return (
+          <a
+            href={link.href}
+            class={`px-3 py-2.5 rounded text-sm transition-colors ${
+              isActive
+                ? 'text-terminal-green bg-terminal-green/10'
+                : 'text-terminal-muted hover:text-terminal-text hover:bg-terminal-surface'
+            }`}
+          >
+            {isActive && <span class="mr-1">{'>'}</span>}
+            {link.label}
+          </a>
+        );
+      })}
+      <a
+        href="/hector-almonte-cv.pdf"
+        download
+        class="mt-2 px-3 py-2.5 rounded border border-terminal-green/50 text-terminal-green text-sm hover:bg-terminal-green hover:text-terminal-bg transition-colors"
+      >
+        ↓ {lang === 'es' ? 'Descargar CV' : 'Download CV'}
+      </a>
     </div>
   </div>
 </nav>
+
+<script>
+  function initMenu() {
+    const btn       = document.getElementById('menu-btn');
+    const menu      = document.getElementById('mobile-menu');
+    const iconOpen  = document.getElementById('icon-open');
+    const iconClose = document.getElementById('icon-close');
+    if (!btn || !menu) return;
+
+    btn.addEventListener('click', () => {
+      const open = menu.classList.toggle('hidden');
+      iconOpen!.classList.toggle('hidden', !open);
+      iconClose!.classList.toggle('hidden', open);
+    });
+
+    // Close menu on link click
+    menu.querySelectorAll('a').forEach(a =>
+      a.addEventListener('click', () => {
+        menu.classList.add('hidden');
+        iconOpen!.classList.remove('hidden');
+        iconClose!.classList.add('hidden');
+      })
+    );
+  }
+
+  initMenu();
+  document.addEventListener('astro:after-swap', initMenu);
+</script>
