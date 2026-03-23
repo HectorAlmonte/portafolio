@@ -94,6 +94,10 @@ export const translations = {
         title: 'bj-architect',
         description: 'Asistente de estrategia para Blackjack en tiempo real. Motor de decisión que recomienda la jugada matemáticamente óptima (Pedir, Plantarse, Doblar, Dividir) con historial persistente y seguimiento de sesión.',
       },
+      {
+        title: 'portfolio',
+        description: 'Este portafolio. Desarrollado con Astro 5 y TailwindCSS, tema terminal con Matrix rain, typewriter, timeline animado con GSAP, soporte bilingüe ES/EN y formulario de contacto con EmailJS.',
+      },
     ],
   },
   en: {
@@ -185,6 +189,10 @@ export const translations = {
       {
         title: 'bj-architect',
         description: 'Real-time Blackjack strategy assistant. Decision engine recommending the mathematically optimal play (Hit, Stand, Double, Split) with persistent hand history and session tracking.',
+      },
+      {
+        title: 'portfolio',
+        description: 'This portfolio. Built with Astro 5 and TailwindCSS, terminal theme with Matrix rain, typewriter, GSAP animated timeline, ES/EN bilingual support and EmailJS contact form.',
       },
     ],
   },

@@ -17,12 +17,18 @@ const techStacks = [
   ['React', 'Node.js', 'SQL Server', 'ASP.NET', 'Mapbox'],
   ['Node.js', 'TypeScript', 'SQL Server', 'REST API'],
   ['Next.js 16', 'TypeScript', 'SQLite', 'Drizzle ORM', 'Zustand', 'shadcn/ui'],
+  ['Astro 5', 'TailwindCSS', 'GSAP', 'TypeScript', 'EmailJS'],
 ];
+
+const demos: Record<number, string> = {
+  5: 'https://portafolio-eight-self-36.vercel.app',
+};
 
 const projects = t.projectData.map((p, i) => ({
   ...p,
   tech: techStacks[i],
   github: 'https://github.com/HectorAlmonte',
+  demo: demos[i],
   featured: i === 0,
 }));
 
