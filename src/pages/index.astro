@@ -1,4 +1,11 @@
 ---
-// Redirect root to default language (Spanish)
-return Astro.redirect('/es/');
+// Static redirect to default language
 ---
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0;url=/es/" />
+    <script>window.location.replace('/es/')</script>
+  </head>
+  <body></body>
+</html>
