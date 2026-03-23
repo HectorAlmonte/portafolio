@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import { ViewTransitions } from 'astro:transitions';
 import { type Lang } from '../i18n/translations';
 
 interface Props {
@@ -11,6 +12,10 @@ interface Props {
 }
 
 const { title, description, lang } = Astro.props;
+
+const siteUrl  = 'https://hector-almonte.dev';
+const ogTitle  = `${title} | Hector Almonte`;
+const ogDesc   = description ?? 'Ingeniero de Sistemas Full Stack — React, Node.js, ASP.NET, SQL Server';
 ---
 
 <!doctype html>
@@ -18,9 +23,26 @@ const { title, description, lang } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description} />
+    <meta name="description" content={ogDesc} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title} | Hector</title>
+    <title>{ogTitle}</title>
+
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:url"         content={siteUrl} />
+    <meta property="og:title"       content={ogTitle} />
+    <meta property="og:description" content={ogDesc} />
+    <meta property="og:locale"      content={lang === 'es' ? 'es_PE' : 'en_US'} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card"        content="summary" />
+    <meta name="twitter:title"       content={ogTitle} />
+    <meta name="twitter:description" content={ogDesc} />
+
+    <!-- Canonical -->
+    <link rel="canonical" href={siteUrl} />
+
+    <ViewTransitions />
   </head>
   <body class="min-h-screen flex flex-col">
     <Navbar lang={lang} />
@@ -28,5 +50,14 @@ const { title, description, lang } = Astro.props;
       <slot />
     </main>
     <Footer lang={lang} />
+    <script>
+      document.addEventListener('astro:page-load', () => {
+        const observer = new IntersectionObserver(
+          entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+          { threshold: 0.12 }
+        );
+        document.querySelectorAll('[data-scroll]').forEach(el => observer.observe(el));
+      });
+    </script>
   </body>
 </html>

@@ -11,52 +11,122 @@ const { lang } = Astro.params as { lang: Lang };
 const t = useTranslations(lang);
 
 const stack = {
-  Frontend: ['React', 'Astro', 'TypeScript', 'TailwindCSS', 'Next.js'],
-  Backend: ['Node.js', 'Express', 'PostgreSQL', 'Redis', 'REST / GraphQL'],
-  DevOps: ['Docker', 'GitHub Actions', 'Linux', 'Nginx'],
-  Tools: ['Git', 'VS Code', 'Figma', 'Postman'],
+  Frontend: ['React', 'Angular', 'HTML5', 'CSS3', 'JavaScript', 'TypeScript'],
+  Backend:  ['Node.js', 'ASP.NET', 'API REST', '.NET (C#)'],
+  Database: ['SQL Server', 'PostgreSQL'],
+  Tools:    ['Git', 'VS Code', 'Postman', 'Docker'],
 };
+
+const skillGroups = [
+  { category: 'frontend', color: 'text-terminal-green',  border: 'border-terminal-green/40',  dot: 'bg-terminal-green',  skills: ['JavaScript', 'TypeScript', 'React', 'Angular', 'HTML5', 'CSS3'] },
+  { category: 'backend',  color: 'text-terminal-cyan',   border: 'border-terminal-cyan/40',   dot: 'bg-terminal-cyan',   skills: ['Node.js', 'ASP.NET', 'API REST', '.NET C#', 'Express'] },
+  { category: 'database', color: 'text-terminal-yellow', border: 'border-terminal-yellow/40', dot: 'bg-terminal-yellow', skills: ['SQL Server', 'PostgreSQL'] },
+  { category: 'tools',    color: 'text-terminal-muted',  border: 'border-terminal-border',    dot: 'bg-terminal-muted',  skills: ['Git', 'Docker', 'VS Code', 'Postman'] },
+];
+
+const skillsCmd = '$ ls -la ~/skills/';
 ---
 
 <Layout title={t.about.title} description={t.meta.about} lang={lang}>
   <section class="max-w-5xl mx-auto px-6 py-20">
-    <!-- Header -->
-    <div class="mb-12">
-      <p class="text-terminal-green text-sm mb-2">{t.about.cmd}</p>
-      <h1 class="text-3xl font-bold text-terminal-text">{t.about.title}</h1>
+
+    <!-- Header animado -->
+    <div class="mb-14" data-scroll>
+      <p class="text-terminal-green text-sm mb-3">{t.about.cmd}</p>
+      <h1 class="text-4xl font-bold text-terminal-text leading-tight">
+        {t.about.title}
+      </h1>
+      <!-- Scan line decoration -->
+      <div class="mt-4 flex items-center gap-3">
+        <div class="h-px flex-1 bg-gradient-to-r from-terminal-green via-terminal-cyan to-transparent"></div>
+        <span class="text-xs text-terminal-muted">hector.almonte.sys</span>
+        <div class="h-px w-8 bg-terminal-border"></div>
+      </div>
     </div>
 
-    <div class="grid md:grid-cols-2 gap-12">
-      <!-- Bio -->
-      <div class="space-y-6">
-        <div class="terminal-card">
-          <p class="text-terminal-muted text-sm leading-loose">
-            {t.about.bio1}
-          </p>
-          <p class="text-terminal-muted text-sm leading-loose mt-4">
-            {t.about.bio2}
-          </p>
+    <!-- Bio + Status -->
+    <div class="grid md:grid-cols-2 gap-6 mb-12">
+      <div class="terminal-card relative overflow-hidden" data-scroll>
+        <!-- Corner accent -->
+        <div class="absolute top-0 right-0 w-16 h-16 overflow-hidden">
+          <div class="absolute top-0 right-0 w-0 h-0 border-l-[64px] border-b-[64px] border-l-transparent border-b-terminal-green/10"></div>
         </div>
+        <p class="text-xs text-terminal-muted mb-3">// bio</p>
+        <p class="text-terminal-muted text-sm leading-loose">{t.about.bio1}</p>
+        <p class="text-terminal-muted text-sm leading-loose mt-4">{t.about.bio2}</p>
+      </div>
 
-        <!-- Status -->
-        <div class="terminal-card">
+      <div class="space-y-4">
+        <div class="terminal-card" data-scroll data-delay="1">
           <p class="text-xs text-terminal-muted mb-3">{t.about.statusLabel}</p>
-          <div class="space-y-2 text-sm">
+          <div class="space-y-2.5 text-sm">
             {t.about.status.map(item => (
-              <div class="flex gap-3">
-                <span class="text-terminal-green">▶</span>
+              <div class="flex gap-3 items-start">
+                <span class="text-terminal-green mt-0.5">▶</span>
                 <span class="text-terminal-muted">{item}</span>
               </div>
             ))}
           </div>
         </div>
+
+        <!-- Location card -->
+        <div class="terminal-card" data-scroll data-delay="2">
+          <p class="text-xs text-terminal-muted mb-3">// {lang === 'es' ? 'ubicación' : 'location'}</p>
+          <div class="flex items-center gap-2">
+            <span class="text-terminal-yellow">📍</span>
+            <span class="text-terminal-text text-sm">Ilo, Moquegua, Perú</span>
+          </div>
+          <div class="mt-2 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-terminal-green animate-pulse"></span>
+            <span class="text-xs text-terminal-muted">{lang === 'es' ? 'Disponible para trabajo remoto' : 'Available for remote work'}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skills — terminal ls style -->
+    <div class="mb-12" id="skills-section">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="text-xs text-terminal-muted">{skillsCmd}</span>
+        <div class="h-px flex-1 bg-terminal-border"></div>
       </div>
 
-      <!-- Stack -->
-      <div class="space-y-4">
-        <p class="text-xs text-terminal-muted">{t.about.stackCmd}</p>
-        {Object.entries(stack).map(([category, items]) => (
-          <div class="terminal-card">
+      <div class="terminal-card">
+        <!-- Column headers -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {skillGroups.map(group => (
+            <div>
+              <div class="flex items-center gap-2 mb-3 pb-2 border-b border-terminal-border">
+                <span class={`w-2 h-2 rounded-full shrink-0 ${group.dot}`}></span>
+                <span class={`text-xs font-semibold ${group.color}`}>{group.category}/</span>
+              </div>
+              <ul class="space-y-2">
+                {group.skills.map(skill => (
+                  <li
+                    class={`skill-item text-xs flex items-center gap-2 text-terminal-muted
+                            border-l-2 ${group.border} pl-2 py-0.5
+                            hover:text-terminal-text transition-colors cursor-default`}
+                    style="opacity:0; transform:translateY(6px)"
+                  >
+                    {skill}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Stack grid -->
+    <div>
+      <div class="flex items-center gap-3 mb-6">
+        <span class="text-xs text-terminal-muted">{t.about.stackCmd}</span>
+        <div class="h-px flex-1 bg-terminal-border"></div>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-4">
+        {Object.entries(stack).map(([category, items], i) => (
+          <div class="terminal-card hover:border-terminal-green/30 transition-colors" data-scroll data-delay={String(i % 2 + 1)}>
             <p class="text-terminal-cyan text-xs mb-3">"{category}":</p>
             <div class="flex flex-wrap gap-2">
               {items.map(item => <span class="tag">{item}</span>)}
@@ -65,5 +135,28 @@ const stack = {
         ))}
       </div>
     </div>
+
   </section>
 </Layout>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  ScrollTrigger.create({
+    trigger: '#skills-section',
+    start: 'top 82%',
+    once: true,
+    onEnter: () => {
+      gsap.to('.skill-item', {
+        opacity: 1,
+        y: 0,
+        duration: 0.35,
+        stagger: 0.04,
+        ease: 'power2.out',
+      });
+    },
+  });
+</script>

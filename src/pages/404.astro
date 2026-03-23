@@ -1,0 +1,128 @@
+---
+import '../styles/global.css';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 | Hector Almonte</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="min-h-screen flex flex-col bg-terminal-bg text-terminal-text font-mono">
+    <Navbar lang="es" />
+
+    <main class="flex-1 flex items-center justify-center px-6 py-24">
+      <div class="max-w-lg w-full">
+
+        <div class="terminal-card">
+          <!-- Window bar -->
+          <div class="flex items-center gap-2 mb-6 pb-4 border-b border-terminal-border">
+            <span class="w-3 h-3 rounded-full bg-terminal-red"></span>
+            <span class="w-3 h-3 rounded-full bg-terminal-yellow"></span>
+            <span class="w-3 h-3 rounded-full bg-terminal-green"></span>
+            <span class="ml-2 text-xs text-terminal-muted">bash — error</span>
+          </div>
+
+          <div class="space-y-3 text-sm" id="err-content">
+            <div class="flex gap-2">
+              <span class="text-terminal-green">➜</span>
+              <span class="text-terminal-muted">~</span>
+              <span class="text-terminal-text" id="cmd-404"></span>
+              <span class="text-terminal-green" id="cursor-404">▋</span>
+            </div>
+
+            <div class="pl-4 opacity-0 transition-opacity duration-500" id="err-output">
+              <p class="text-terminal-red font-bold text-4xl mb-2">404</p>
+              <p class="text-terminal-muted">bash: página no encontrada</p>
+              <p class="text-terminal-muted text-xs mt-1">No such file or directory</p>
+            </div>
+
+            <div class="flex gap-2 opacity-0" id="line-fix">
+              <span class="text-terminal-green">➜</span>
+              <span class="text-terminal-muted">~</span>
+              <span class="text-terminal-text" id="cmd-fix"></span>
+              <span class="text-terminal-green" id="cursor-fix">▋</span>
+            </div>
+
+            <div class="pl-4 opacity-0 transition-opacity duration-500" id="fix-output">
+              <p class="text-terminal-muted text-xs mb-3">Rutas disponibles:</p>
+              <div class="space-y-1.5">
+                {[
+                  { href: '/es/', label: '~/' },
+                  { href: '/es/about', label: '~/about' },
+                  { href: '/es/projects', label: '~/projects' },
+                  { href: '/es/contact', label: '~/contact' },
+                ].map(link => (
+                  <a
+                    href={link.href}
+                    class="flex items-center gap-2 text-terminal-cyan hover:text-terminal-green transition-colors group"
+                  >
+                    <span class="text-terminal-green group-hover:translate-x-1 transition-transform">▶</span>
+                    <span>{link.label}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <div class="flex gap-2 opacity-0" id="line-final-404">
+              <span class="text-terminal-green">➜</span>
+              <span class="text-terminal-muted">~</span>
+              <span class="text-terminal-green animate-blink">▋</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <Footer lang="es" />
+  </body>
+</html>
+
+<script>
+  function typeText(el: HTMLElement, text: string, speed = 60): Promise<void> {
+    return new Promise(resolve => {
+      let i = 0;
+      const tick = setInterval(() => {
+        el.textContent += text[i++];
+        if (i >= text.length) { clearInterval(tick); resolve(); }
+      }, speed);
+    });
+  }
+
+  function show(el: HTMLElement) { el.style.opacity = '1'; }
+  function hide(el: HTMLElement) { el.style.display = 'none'; }
+  const delay = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
+
+  async function run() {
+    const cmd404    = document.getElementById('cmd-404')!;
+    const cur404    = document.getElementById('cursor-404')!;
+    const errOutput = document.getElementById('err-output')!;
+    const lineFix   = document.getElementById('line-fix')!;
+    const cmdFix    = document.getElementById('cmd-fix')!;
+    const curFix    = document.getElementById('cursor-fix')!;
+    const fixOutput = document.getElementById('fix-output')!;
+    const lineFinal = document.getElementById('line-final-404')!;
+
+    await delay(400);
+    await typeText(cmd404, `cd ${window.location.pathname}`);
+    hide(cur404);
+    await delay(200);
+    show(errOutput);
+    await delay(700);
+
+    show(lineFix);
+    await typeText(cmdFix, 'ls ~/');
+    hide(curFix);
+    await delay(200);
+    show(fixOutput);
+    await delay(300);
+    show(lineFinal);
+  }
+
+  run();
+</script>

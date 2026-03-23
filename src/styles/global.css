@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
 
 html {
   scroll-behavior: smooth;
@@ -46,4 +46,36 @@ body {
   .tag {
     @apply text-xs px-2 py-1 rounded border border-terminal-border text-terminal-muted font-mono;
   }
+}
+
+/* ── Scroll-reveal animations ─────────────────────────────── */
+[data-scroll] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+[data-scroll].visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+[data-scroll][data-delay="1"] { transition-delay: 0.1s; }
+[data-scroll][data-delay="2"] { transition-delay: 0.2s; }
+[data-scroll][data-delay="3"] { transition-delay: 0.3s; }
+[data-scroll][data-delay="4"] { transition-delay: 0.4s; }
+
+/* ── Glitch hover on project titles ──────────────────────── */
+@keyframes glitch {
+  0%, 100% { text-shadow: none;              clip-path: none; }
+  20%       { text-shadow: -2px 0 #f85149;   transform: translateX(2px);  }
+  40%       { text-shadow:  2px 0 #58a6ff;   transform: translateX(-2px); }
+  60%       { text-shadow: -1px 0 #39d353;   transform: translateX(1px);  }
+  80%       { text-shadow:  1px 0 #f85149;   transform: translateX(-1px); }
+}
+.glitch-on-hover {
+  display: inline-block;
+  transition: color 0.2s;
+}
+.group:hover .glitch-on-hover {
+  animation: glitch 0.45s steps(1) infinite;
+  color: #39d353;
 }

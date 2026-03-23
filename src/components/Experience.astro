@@ -1,0 +1,227 @@
+---
+import { type Lang } from '../i18n/translations';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+const data = {
+  es: {
+    heading: 'Trayectoria',
+    cmd: '$ cat experience.json',
+    items: [
+      {
+        type: 'work',
+        role: 'Supervisor de Sistemas y Operaciones',
+        org: 'Global Plus',
+        badge: 'Presencial · Ilo, Perú',
+        period: 'Mar 2025 — Presente',
+        duration: 'Actual',
+        bullets: [
+          'Supervisión de sistemas tecnológicos y operaciones en empresa de almacenaje de materiales peligrosos.',
+          'Desarrollo de sistema de seguridad industrial para gestión de riesgos, protocolos de emergencia y control operativo.',
+          'Implementación de soluciones digitales para optimizar procesos de almacenaje y cumplimiento normativo.',
+        ],
+        tags: ['Next.js', 'TypeScript', 'PostgreSQL', 'Docker', 'PWA'],
+      },
+      {
+        type: 'work',
+        role: 'Programador Full Stack',
+        org: 'Agrosoft',
+        badge: 'Trabajo Remoto',
+        period: 'Dic 2021 — Feb 2025',
+        duration: '3 años 2 meses',
+        bullets: [
+          'Desarrollé sistemas de gestión agrícola con visualización geoespacial en tiempo real para monitoreo de maquinaria.',
+          'Diseñé reportes analíticos personalizados procesando grandes volúmenes de datos para optimizar la toma de decisiones.',
+          'Implementé mapeo GPS con seguimiento de rutas, velocidades y parámetros operativos clave en tiempo real.',
+          'Construí un sistema de alertas para control de maquinaria basado en órdenes de trabajo asignadas.',
+        ],
+        tags: ['React', 'Node.js', 'SQL Server', 'ASP.NET', '.NET C#', 'Mapbox'],
+      },
+      {
+        type: 'edu',
+        role: 'Bachiller en Ingeniería de Sistemas',
+        org: 'Universidad José Carlos Mariátegui',
+        badge: 'Ilo, Moquegua, Perú',
+        period: 'Ene 2016 — Dic 2021',
+        duration: '5 años',
+        bullets: [
+          'Especialización en desarrollo web con .NET, JavaScript y aplicaciones de escritorio.',
+          'Sólida base en algoritmos, estructuras de datos, bases de datos relacionales y arquitectura de software.',
+        ],
+        tags: ['JavaScript', 'C#', '.NET', 'SQL Server', 'HTML/CSS'],
+      },
+    ],
+  },
+  en: {
+    heading: 'Timeline',
+    cmd: '$ cat experience.json',
+    items: [
+      {
+        type: 'work',
+        role: 'Systems & Operations Supervisor',
+        org: 'Global Plus',
+        badge: 'On-site · Ilo, Peru',
+        period: 'Mar 2025 — Present',
+        duration: 'Current',
+        bullets: [
+          'Supervising technology systems and operations at a hazardous materials storage company.',
+          'Developing an industrial safety system for risk management, emergency protocols, and operational control.',
+          'Implementing digital solutions to optimize storage processes and regulatory compliance.',
+        ],
+        tags: ['Next.js', 'TypeScript', 'PostgreSQL', 'Docker', 'PWA'],
+      },
+      {
+        type: 'work',
+        role: 'Full Stack Programmer',
+        org: 'Agrosoft',
+        badge: 'Remote Work',
+        period: 'Dec 2021 — Feb 2025',
+        duration: '3 years 2 months',
+        bullets: [
+          'Developed agricultural management systems with real-time geospatial visualization for machinery monitoring.',
+          'Designed custom analytical reports processing large data volumes to optimize decision-making.',
+          'Implemented GPS mapping with real-time route tracking, speed monitoring, and key operational parameters.',
+          'Built an alert system for machinery control based on assigned work orders.',
+        ],
+        tags: ['React', 'Node.js', 'SQL Server', 'ASP.NET', '.NET C#', 'Mapbox'],
+      },
+      {
+        type: 'edu',
+        role: 'Bachelor of Systems Engineering',
+        org: 'Universidad José Carlos Mariátegui',
+        badge: 'Ilo, Moquegua, Peru',
+        period: 'Jan 2016 — Dec 2021',
+        duration: '5 years',
+        bullets: [
+          'Specialization in web development with .NET, JavaScript and desktop applications.',
+          'Strong foundation in algorithms, data structures, relational databases, and software architecture.',
+        ],
+        tags: ['JavaScript', 'C#', '.NET', 'SQL Server', 'HTML/CSS'],
+      },
+    ],
+  },
+};
+
+const t = data[lang];
+---
+
+<section class="max-w-5xl mx-auto px-6 pb-24" id="experience-section">
+  <!-- Header -->
+  <div class="mb-12" data-scroll>
+    <p class="text-terminal-green text-sm mb-2">{t.cmd}</p>
+    <h2 class="text-2xl font-bold text-terminal-text">{t.heading}</h2>
+  </div>
+
+  <!-- Timeline -->
+  <div class="relative">
+    <!-- Vertical line -->
+    <div
+      id="tl-line"
+      class="absolute left-4 md:left-6 top-0 bottom-0 w-px bg-terminal-green origin-top"
+      style="transform: scaleY(0)"
+    ></div>
+
+    <div class="space-y-10">
+      {t.items.map((item, idx) => (
+        <div class="relative flex gap-6 md:gap-10 tl-item" style="opacity:0; transform: translateX(20px)">
+          <!-- Node dot -->
+          <div class="relative z-10 flex-shrink-0">
+            <div class={`
+              w-8 h-8 md:w-12 md:h-12 rounded-full border-2 flex items-center justify-center text-lg
+              ${item.type === 'work'
+                ? 'border-terminal-green bg-terminal-surface text-terminal-green'
+                : 'border-terminal-cyan  bg-terminal-surface text-terminal-cyan'}
+            `}>
+              {item.type === 'work' ? '⚡' : '🎓'}
+            </div>
+          </div>
+
+          <!-- Card -->
+          <div class={`
+            flex-1 terminal-card mb-2
+            hover:border-terminal-green/40 transition-colors
+            ${item.type === 'work' ? 'border-l-terminal-green/20' : ''}
+          `}>
+            <!-- Top row -->
+            <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
+              <div>
+                <h3 class="text-terminal-text font-semibold text-base">{item.role}</h3>
+                <p class={`text-sm mt-0.5 font-medium ${item.type === 'work' ? 'text-terminal-green' : 'text-terminal-cyan'}`}>
+                  {item.org}
+                </p>
+              </div>
+              <div class="flex flex-col items-end gap-1 shrink-0">
+                <span class="text-xs text-terminal-muted border border-terminal-border rounded px-2 py-0.5">
+                  {item.period}
+                </span>
+                <span class="text-xs text-terminal-muted opacity-60">{item.duration}</span>
+              </div>
+            </div>
+
+            <!-- Badge -->
+            <span class={`
+              inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border mb-4
+              ${item.type === 'work'
+                ? 'border-terminal-green/30 text-terminal-green bg-terminal-green/5'
+                : 'border-terminal-cyan/30  text-terminal-cyan  bg-terminal-cyan/5'}
+            `}>
+              {item.type === 'work' ? '◉' : '◈'} {item.badge}
+            </span>
+
+            <!-- Bullets -->
+            <ul class="space-y-2 mb-4">
+              {item.bullets.map(b => (
+                <li class="flex gap-2 text-sm text-terminal-muted">
+                  <span class={`shrink-0 mt-0.5 ${item.type === 'work' ? 'text-terminal-green' : 'text-terminal-cyan'}`}>▶</span>
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
+
+            <!-- Tags -->
+            <div class="flex flex-wrap gap-2 pt-3 border-t border-terminal-border">
+              {item.tags.map(tag => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  ScrollTrigger.create({
+    trigger: '#experience-section',
+    start: 'top 75%',
+    once: true,
+    onEnter: () => {
+      // Grow the timeline line
+      gsap.to('#tl-line', {
+        scaleY: 1,
+        duration: 1.2,
+        ease: 'power2.inOut',
+      });
+
+      // Stagger the cards sliding in
+      gsap.to('.tl-item', {
+        opacity: 1,
+        x: 0,
+        duration: 0.55,
+        stagger: 0.2,
+        delay: 0.2,
+        ease: 'power2.out',
+      });
+    },
+  });
+</script>
