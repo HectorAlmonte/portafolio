@@ -55,6 +55,7 @@ const currentPage  = pathSegments[1] ?? '';
 
       <a
         href={alternatePath}
+        data-astro-reload
         class="ml-3 px-2.5 py-1 rounded border border-terminal-border text-xs text-terminal-muted hover:text-terminal-green hover:border-terminal-green transition-colors font-mono uppercase tracking-wider"
       >
         {alternateLang}
@@ -74,6 +75,7 @@ const currentPage  = pathSegments[1] ?? '';
     <div class="flex md:hidden items-center gap-2">
       <a
         href={alternatePath}
+        data-astro-reload
         class="px-2 py-1 rounded border border-terminal-border text-xs text-terminal-muted font-mono uppercase"
       >
         {alternateLang}
@@ -140,6 +142,5 @@ const currentPage  = pathSegments[1] ?? '';
     );
   }
 
-  initMenu();
-  document.addEventListener('astro:after-swap', initMenu);
+  document.addEventListener('astro:page-load', initMenu);
 </script>
