@@ -1,6 +1,5 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import ProjectCard from '../../components/ProjectCard.astro';
 import { languages, type Lang } from '../../i18n/translations';
 import { useTranslations } from '../../i18n/utils';
 
@@ -11,130 +10,243 @@ export function getStaticPaths() {
 const { lang } = Astro.params as { lang: Lang };
 const t = useTranslations(lang);
 
-const techStacks = [
-  ['Next.js 16', 'TypeScript', 'PostgreSQL', 'Prisma', 'PWA', 'Tesseract.js', 'Docker'],
-  ['Next.js 14', 'TypeScript', 'PostgreSQL', 'Prisma', 'NextAuth', 'Recharts', 'Docker'],
-  ['React', 'Node.js', 'SQL Server', 'ASP.NET', 'Mapbox'],
-  ['Node.js', 'TypeScript', 'SQL Server', 'REST API'],
-  ['Next.js 16', 'TypeScript', 'SQLite', 'Drizzle ORM', 'Zustand', 'shadcn/ui'],
-  ['Astro 5', 'TailwindCSS', 'GSAP', 'TypeScript', 'EmailJS'],
+const projects = [
+  {
+    id: 'gre-materiales', title: 'gre-materiales', year: '2025',
+    kind: lang === 'es' ? 'producto propio · PWA' : 'own product · PWA',
+    featured: true,
+    tagline: lang === 'es'
+      ? 'Sistema PWA para consulta de 2,661 materiales peligrosos (GRE 2024). Búsqueda en tiempo real, escáner OCR, modo offline.'
+      : 'PWA for consulting 2,661 hazardous materials (ERG 2024). Real-time search, OCR scanner, offline mode.',
+    stack: ['Next.js 16', 'TypeScript', 'PostgreSQL', 'PWA', 'Tesseract.js'],
+    github: 'https://github.com/HectorAlmonte',
+  },
+  {
+    id: 'rindex', title: 'rindex', year: '2024',
+    kind: lang === 'es' ? 'SaaS académico' : 'academic SaaS',
+    featured: true,
+    tagline: lang === 'es'
+      ? 'Plataforma de evaluación académica con 3 roles, exámenes temporizados y análisis de rendimiento.'
+      : 'Academic evaluation platform with 3 roles, timed exams, and performance analytics.',
+    stack: ['Next.js 14', 'TypeScript', 'Prisma', 'PostgreSQL', 'NextAuth'],
+    github: 'https://github.com/HectorAlmonte',
+  },
+  {
+    id: 'agrosoft-fleet', title: 'agrosoft-fleet', year: '2022–2025',
+    kind: lang === 'es' ? 'trabajo · sistema interno' : 'work · internal system',
+    featured: false,
+    tagline: lang === 'es'
+      ? 'Monitoreo en tiempo real de maquinaria agrícola con visualización geoespacial. GPS, alertas, telemetría.'
+      : 'Real-time agricultural machinery monitoring with geospatial visualization. GPS, alerts, telemetry.',
+    stack: ['React', '.NET C#', 'SQL Server', 'Mapbox'],
+    github: 'https://github.com/HectorAlmonte',
+  },
+  {
+    id: 'industrial-safety', title: 'industrial-safety', year: '2025',
+    kind: lang === 'es' ? 'trabajo · Global Plus' : 'work · Global Plus',
+    featured: false,
+    tagline: lang === 'es'
+      ? 'Sistema de gestión de riesgos para almacenaje de materiales peligrosos. Protocolos, control operativo, multi-rol.'
+      : 'Risk management system for hazardous materials storage. Protocols, operational control, multi-role.',
+    stack: ['Next.js', 'PostgreSQL', 'Docker', 'PWA'],
+    github: 'https://github.com/HectorAlmonte',
+  },
+  {
+    id: 'bj-architect', title: 'bj-architect', year: '2024',
+    kind: lang === 'es' ? 'herramienta personal' : 'personal tool',
+    featured: false,
+    tagline: lang === 'es'
+      ? 'Asistente de estrategia para Blackjack en tiempo real. Motor de decisión óptima con historial de sesión.'
+      : 'Real-time Blackjack strategy assistant. Optimal decision engine with session history.',
+    stack: ['Next.js 16', 'TypeScript', 'SQLite', 'Drizzle ORM'],
+    github: 'https://github.com/HectorAlmonte',
+  },
+  {
+    id: 'portfolio', title: 'portfolio', year: '2024',
+    kind: lang === 'es' ? 'proyecto personal' : 'personal project',
+    featured: false,
+    tagline: lang === 'es'
+      ? 'Este portafolio. Astro 5, TailwindCSS, tema Terminal Evolved, soporte bilingüe ES/EN.'
+      : 'This portfolio. Astro 5, TailwindCSS, Terminal Evolved theme, ES/EN bilingual support.',
+    stack: ['Astro 5', 'TailwindCSS', 'TypeScript', 'EmailJS'],
+    github: 'https://github.com/HectorAlmonte/portafolio',
+    demo: 'https://portafolio-eight-self-36.vercel.app',
+  },
 ];
 
-const demos: Record<number, string> = {
-  5: 'https://portafolio-eight-self-36.vercel.app',
-};
+const heroTitle = lang === 'es' ? 'projects/all' : 'projects/all';
+const heroDesc  = lang === 'es'
+  ? 'Una selección de software que terminó en producción y aguantó. Productos propios, trabajos internos, freelance. Todos tienen al menos un usuario que no soy yo.'
+  : 'A selection of software that made it to production and stuck around. Own products, internal work, freelance. All have at least one user who isn\'t me.';
 
-const projects = t.projectData.map((p, i) => ({
-  ...p,
-  tech: techStacks[i],
-  github: 'https://github.com/HectorAlmonte',
-  demo: demos[i],
-  featured: i === 0,
-}));
-
-const [featured, ...rest] = projects;
-
-const moreLabel = lang === 'es' ? 'Otros proyectos' : 'More projects';
-const moreCmd   = lang === 'es' ? '$ ls ~/projects/ --all' : '$ ls ~/projects/ --all';
+const colYear    = 'year';
+const colProject = 'project';
+const colSummary = lang === 'es' ? 'descripción' : 'summary';
+const colStack   = 'stack';
 ---
 
 <Layout title={t.projects.title} description={t.meta.projects} lang={lang}>
-  <section class="max-w-5xl mx-auto px-6 py-20">
 
-    <!-- Header -->
-    <div class="mb-14" data-scroll>
-      <p class="text-terminal-green text-sm mb-3">{t.projects.cmd}</p>
-      <h1 class="text-4xl font-bold text-terminal-text">{t.projects.title}</h1>
-      <div class="mt-4 flex items-center gap-3">
-        <div class="h-px w-12 bg-terminal-green"></div>
-        <div class="h-px flex-1 bg-gradient-to-r from-terminal-green/40 to-transparent"></div>
-        <span class="text-xs text-terminal-muted">{t.projects.count(projects.length)}</span>
-      </div>
+  <!-- HEADER -->
+  <section style="padding:64px 56px 32px" class="proj-header">
+    <div style="font-size:11px;color:var(--muted);margin-bottom:12px">
+      <span style="color:var(--accent)">$</span> ls ~/projects --all
+      <span style="color:var(--rule-soft)"> · </span>
+      <span style="color:var(--muted)">// N.º 03</span>
     </div>
+    <h1 class="tm-display" style="font-size:clamp(56px,8vw,96px);margin:0;line-height:.95">
+      <span style="color:var(--muted)">{'>'}</span>
+      <span style="color:var(--ink)"> projects</span><span style="color:var(--muted)">/</span><span class="sans" style="font-style:italic;color:var(--accent)">all</span>
+      <span class="tm-cursor" style="color:var(--accent)"></span>
+    </h1>
+    <p class="sans" style="margin-top:32px;font-size:18px;color:var(--ink-soft);max-width:780px;line-height:1.5">
+      {heroDesc}
+    </p>
+  </section>
 
-    <!-- Featured project — full width hero card -->
-    <div class="mb-12 proj-card" style="opacity:0; transform:translateY(20px)">
-      <div class="terminal-card border-terminal-green/40 relative overflow-hidden group hover:border-terminal-green/70 transition-colors">
-        <!-- Glowing top border -->
-        <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-terminal-green to-transparent"></div>
-
-        <div class="grid md:grid-cols-2 gap-8 items-start">
-          <div>
-            <div class="flex items-center gap-2 mb-4">
-              <span class="text-terminal-yellow text-sm">★</span>
-              <span class="text-xs text-terminal-muted">~/projects/</span>
-              <span class="text-xs border border-terminal-green/40 text-terminal-green rounded px-2 py-0.5">
-                {lang === 'es' ? 'Destacado' : 'Featured'}
-              </span>
-            </div>
-            <h2 class="text-xl font-bold text-terminal-text group-hover:text-terminal-green transition-colors glitch-on-hover mb-3">
-              {featured.title}
-            </h2>
-            <p class="text-terminal-muted text-sm leading-relaxed">
-              {featured.description}
-            </p>
-            <a
-              href={featured.github}
-              target="_blank" rel="noopener"
-              class="inline-flex items-center gap-2 mt-5 text-xs text-terminal-muted
-                     hover:text-terminal-green transition-colors border border-terminal-border
-                     hover:border-terminal-green/50 rounded px-3 py-1.5"
-            >
-              <span>⌥</span> {lang === 'es' ? 'Ver en GitHub' : 'View on GitHub'}
-            </a>
-          </div>
-
-          <div>
-            <p class="text-xs text-terminal-muted mb-3">// tech stack</p>
-            <div class="flex flex-wrap gap-2 mb-6">
-              {featured.tech.map(t => (
-                <span class="tag border-terminal-green/30 text-terminal-green/80">{t}</span>
-              ))}
-            </div>
-            <!-- Fake terminal output block -->
-            <div class="bg-terminal-bg rounded border border-terminal-border p-3 text-xs font-mono space-y-1">
-              <p><span class="text-terminal-green">▶</span> <span class="text-terminal-muted">pnpm dev</span></p>
-              <p class="text-terminal-muted pl-4">Database connected ✓</p>
-              <p class="text-terminal-muted pl-4">2 661 materiales cargados ✓</p>
-              <p class="text-terminal-muted pl-4">OCR engine ready ✓</p>
-              <p class="text-terminal-muted pl-4">PWA offline mode ✓</p>
-              <p><span class="text-terminal-green animate-blink">▋</span></p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Rest of projects -->
-    <div class="mb-6">
-      <div class="flex items-center gap-3 mb-6">
-        <span class="text-xs text-terminal-muted">{moreCmd}</span>
-        <div class="h-px flex-1 bg-terminal-border"></div>
-      </div>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {rest.map((project, i) => (
-          <div class="proj-card" style="opacity:0; transform:translateY(20px)">
-            <ProjectCard {...project} />
-          </div>
+  <!-- TOOLBAR -->
+  <section style="padding:20px 56px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--bg-dark)" class="proj-toolbar">
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <span style="font-size:11px;color:var(--muted)">$ filter --by</span>
+      <div style="display:flex;gap:6px;flex-wrap:wrap" id="filter-btns">
+        {[
+          { id: 'all',      label: 'all',      n: projects.length },
+          { id: 'featured', label: 'featured', n: projects.filter(p => p.featured).length },
+          { id: 'producto', label: 'producto', n: projects.filter(p => p.kind.includes('producto')).length },
+          { id: 'trabajo',  label: 'trabajo',  n: projects.filter(p => p.kind.includes('trabajo')).length },
+        ].map(f => (
+          <button
+            data-filter={f.id}
+            class="filter-chip"
+            style={`padding:6px 14px;border-radius:999px;border:1px solid var(--rule);background:${f.id === 'all' ? 'var(--accent)' : 'transparent'};color:${f.id === 'all' ? 'var(--bg)' : 'var(--ink-soft)'};cursor:pointer;font-family:inherit;font-size:12px;transition:background .15s,color .15s,border-color .15s;${f.id === 'all' ? 'font-weight:600;border-color:var(--accent)' : ''}`}
+          >
+            {f.label} <span style="opacity:.6;margin-left:4px">{f.n}</span>
+          </button>
         ))}
       </div>
+      <span style="flex:1"></span>
+      <a href="https://github.com/HectorAlmonte" target="_blank" rel="noreferrer"
+        style="font-size:12px;color:var(--accent);text-decoration:none">
+        github.com/HectorAlmonte ↗
+      </a>
+    </div>
+  </section>
+
+  <!-- INDEX TABLE -->
+  <section style="padding:24px 56px 80px" class="proj-list">
+    <!-- Column headers -->
+    <div style="padding:14px 0;display:grid;grid-template-columns:96px 1.6fr 2.2fr 1.4fr 32px;gap:24px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--rule)" class="proj-cols">
+      <span>{colYear}</span><span>{colProject}</span><span>{colSummary}</span><span>{colStack}</span><span>→</span>
     </div>
 
+    <!-- Rows -->
+    {projects.map(p => (
+      <a
+        href={p.demo ?? p.github}
+        target="_blank"
+        rel="noreferrer"
+        class="proj-row proj-cols"
+        data-kind={p.kind}
+        data-featured={String(p.featured)}
+        style="grid-template-columns:96px 1.6fr 2.2fr 1.4fr 32px"
+      >
+        <div class="tm-display proj-row-year" style="font-size:28px;color:var(--ink);line-height:1;letter-spacing:-.02em">
+          {String(p.year).slice(-4)}
+        </div>
+        <div>
+          <div class="proj-row-title tm-display" style="font-size:20px;color:var(--ink);letter-spacing:-.02em;display:flex;align-items:center;gap:8px">
+            {p.title}
+            {p.featured && <span style="color:var(--accent);font-size:12px">★</span>}
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px">{p.kind}</div>
+        </div>
+        <div class="sans" style="font-size:14px;color:var(--ink-soft);padding-top:4px">{p.tagline}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;padding-top:4px">
+          {p.stack.slice(0, 3).map(tech => (
+            <span class="tm-chip">{tech}</span>
+          ))}
+          {p.stack.length > 3 && (
+            <span style="font-size:10px;color:var(--muted);padding:3px 4px;font-family:'JetBrains Mono',monospace">+{p.stack.length - 3}</span>
+          )}
+        </div>
+        <div class="proj-row-arrow" style="font-size:16px;color:var(--muted);padding-top:6px;transition:transform .25s,color .25s">→</div>
+      </a>
+    ))}
+    <div style="border-top:1px solid var(--rule)" id="no-results" style="display:none">
+      <div style="padding:60px 0;text-align:center;color:var(--muted);font-size:13px;display:none" id="empty-msg">
+        <span style="color:var(--warn)">!</span> {lang === 'es' ? 'Sin resultados para ese filtro' : 'No results for that filter'}
+      </div>
+    </div>
+  </section>
+
+  <!-- GITHUB CTA -->
+  <section style="padding:48px 56px 80px;border-top:1px solid var(--rule);background:var(--bg-dark)" class="proj-cta">
+    <div class="tm-panel" style="padding:32px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">$ open github</div>
+        <div class="tm-display" style="font-size:28px;color:var(--ink);letter-spacing:-.02em">
+          {lang === 'es' ? '¿Querés ver código en vivo?' : 'Want to see live code?'}
+        </div>
+        <div class="sans" style="font-size:14px;color:var(--ink-soft);margin-top:6px">
+          {lang === 'es'
+            ? 'Repositorios públicos, experimentos y configuraciones.'
+            : 'Public repositories, experiments and configurations.'
+          }
+        </div>
+      </div>
+      <a href="https://github.com/HectorAlmonte" target="_blank" rel="noreferrer"
+        style="padding:14px 24px;background:var(--accent);color:var(--bg);border-radius:4px;font-size:13px;font-weight:600;text-decoration:none;font-family:inherit">
+        github.com/HectorAlmonte ↗
+      </a>
+    </div>
   </section>
 </Layout>
 
-<script>
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+<style>
+  .proj-row:hover .proj-row-arrow { transform: translateX(4px); color: var(--accent) !important; }
+  .proj-row:hover .proj-row-title { color: var(--accent) !important; }
 
-  gsap.registerPlugin(ScrollTrigger);
+  @media (max-width: 900px) {
+    .proj-header, .proj-toolbar, .proj-list, .proj-cta { padding-left: 24px !important; padding-right: 24px !important; }
+    .proj-header { padding-top: 40px !important; }
+    .proj-cols { grid-template-columns: 1fr !important; }
+    .proj-row-year { display: none; }
+  }
+</style>
 
-  gsap.to('.proj-card', {
-    scrollTrigger: { trigger: '.proj-card', start: 'top 85%' },
-    opacity: 1,
-    y: 0,
-    duration: 0.55,
-    stagger: 0.12,
-    ease: 'power2.out',
+<script define:vars={{ lang }}>
+  document.addEventListener('astro:page-load', () => {
+    const filterBtns  = document.querySelectorAll('.filter-chip');
+    const rows        = document.querySelectorAll('.proj-row');
+    const emptyMsg    = document.getElementById('empty-msg');
+
+    function applyFilter(f) {
+      filterBtns.forEach(btn => {
+        const on = btn.dataset.filter === f;
+        btn.style.background    = on ? 'var(--accent)' : 'transparent';
+        btn.style.color         = on ? 'var(--bg)'     : 'var(--ink-soft)';
+        btn.style.borderColor   = on ? 'var(--accent)' : 'var(--rule)';
+        btn.style.fontWeight    = on ? '600'            : '400';
+      });
+
+      let visible = 0;
+      rows.forEach(row => {
+        const kind     = row.dataset.kind ?? '';
+        const featured = row.dataset.featured === 'true';
+        let show = false;
+        if (f === 'all')      show = true;
+        else if (f === 'featured') show = featured;
+        else                  show = kind.includes(f);
+
+        row.style.display = show ? 'grid' : 'none';
+        if (show) visible++;
+      });
+
+      if (emptyMsg) emptyMsg.style.display = visible === 0 ? 'block' : 'none';
+    }
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => applyFilter(btn.dataset.filter ?? 'all'));
+    });
   });
 </script>

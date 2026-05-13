@@ -1,9 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Hero from '../../components/Hero.astro';
-import Stats from '../../components/Stats.astro';
-import Experience from '../../components/Experience.astro';
-import ProjectCard from '../../components/ProjectCard.astro';
 import { languages, type Lang } from '../../i18n/translations';
 import { useTranslations } from '../../i18n/utils';
 
@@ -14,44 +11,278 @@ export function getStaticPaths() {
 const { lang } = Astro.params as { lang: Lang };
 const t = useTranslations(lang);
 
-const featuredProjects = t.featuredProjects.map((p, i) => ({
-  ...p,
-  tech: i === 0
-    ? ['Next.js 16', 'TypeScript', 'PostgreSQL', 'PWA', 'Tesseract.js']
-    : ['Next.js 14', 'TypeScript', 'Prisma', 'PostgreSQL', 'NextAuth'],
-  github: 'https://github.com/HectorAlmonte',
-  featured: i === 0,
-}));
+const experience = [
+  {
+    from: 'Mar 2025', to: lang === 'es' ? 'Presente' : 'Present',
+    duration: lang === 'es' ? 'Actual' : 'Current', mode: lang === 'es' ? 'Presencial · Ilo, Perú' : 'On-site · Ilo, Peru',
+    role: lang === 'es' ? 'Supervisor de Sistemas y Operaciones' : 'Systems & Operations Supervisor',
+    company: 'Global Plus',
+    bullets: lang === 'es' ? [
+      'Supervisión de sistemas tecnológicos en empresa de almacenaje de materiales peligrosos.',
+      'Desarrollo de sistema de seguridad industrial para gestión de riesgos y protocolos de emergencia.',
+      'Implementación de soluciones digitales para optimizar procesos de almacenaje y cumplimiento normativo.',
+    ] : [
+      'Supervision of tech systems at a hazardous materials storage company.',
+      'Building an industrial safety system for risk management and emergency protocols.',
+      'Digital solutions to optimize storage processes and regulatory compliance.',
+    ],
+    stack: ['Next.js', 'TypeScript', 'PostgreSQL', 'Docker', 'PWA'],
+  },
+  {
+    from: 'Dic 2021', to: 'Feb 2025',
+    duration: lang === 'es' ? '3 años 2 meses' : '3 years 2 months', mode: lang === 'es' ? 'Trabajo Remoto' : 'Remote',
+    role: lang === 'es' ? 'Programador Full Stack' : 'Full Stack Developer',
+    company: 'Agrosoft',
+    bullets: lang === 'es' ? [
+      'Desarrollé sistemas de gestión agrícola con visualización geoespacial en tiempo real para maquinaria.',
+      'Diseñé reportes analíticos personalizados procesando grandes volúmenes de datos.',
+      'Implementé mapeo GPS con seguimiento de rutas y parámetros operativos en tiempo real.',
+    ] : [
+      'Built agricultural management systems with real-time geospatial visualization for machinery.',
+      'Designed custom analytics reports processing large data volumes.',
+      'Implemented GPS mapping with route tracking and real-time operational parameters.',
+    ],
+    stack: ['React', 'Node.js', 'SQL Server', 'ASP.NET', '.NET C#', 'Mapbox'],
+  },
+  {
+    from: 'Ene 2016', to: 'Dic 2021',
+    duration: lang === 'es' ? '5 años' : '5 years', mode: 'Ilo, Moquegua, Perú',
+    role: lang === 'es' ? 'Bachiller en Ingeniería de Sistemas' : 'B.Sc. Systems Engineering',
+    company: 'Universidad José Carlos Mariátegui',
+    bullets: lang === 'es' ? [
+      'Especialización en desarrollo web con .NET, JavaScript y aplicaciones de escritorio.',
+      'Base sólida en algoritmos, estructuras de datos y arquitectura de software.',
+    ] : [
+      'Specialization in web development with .NET, JavaScript and desktop applications.',
+      'Solid foundation in algorithms, data structures and software architecture.',
+    ],
+    stack: ['JavaScript', 'C#', '.NET', 'SQL Server', 'HTML/CSS'],
+  },
+];
+
+const featuredProjects = [
+  {
+    id: 'gre-materiales', title: 'gre-materiales', year: '2025',
+    kind: lang === 'es' ? 'producto propio · PWA' : 'own product · PWA',
+    tagline: lang === 'es'
+      ? 'Sistema PWA para consulta de 2,661 materiales peligrosos (GRE 2024).'
+      : 'PWA for consulting 2,661 hazardous materials (ERG 2024).',
+    stack: ['Next.js 16', 'TypeScript', 'PostgreSQL', 'PWA', 'Tesseract.js'],
+  },
+  {
+    id: 'rindex', title: 'rindex', year: '2024',
+    kind: lang === 'es' ? 'SaaS académico' : 'academic SaaS',
+    tagline: lang === 'es'
+      ? 'Plataforma de evaluación académica con roles y exámenes temporizados.'
+      : 'Academic evaluation platform with roles and timed exams.',
+    stack: ['Next.js 14', 'TypeScript', 'Prisma', 'PostgreSQL', 'NextAuth'],
+  },
+];
+
+const commits = [
+  { type: 'feat',     scope: 'gre-materiales', msg: 'offline IndexedDB sync for 2,661 entries' },
+  { type: 'refactor', scope: 'rindex',         msg: 'extract scoring engine to /lib' },
+  { type: 'fix',      scope: 'agrosoft',       msg: 'mapbox tile cache eviction race' },
+  { type: 'perf',     scope: 'global-plus',    msg: 'cut report query from 4.2s → 380ms' },
+  { type: 'docs',     scope: 'gre-materiales', msg: 'incident postmortem · telemetry outage' },
+  { type: 'chore',    scope: 'gre',            msg: 'bump Next 16 → 16.1 · pwa workbox' },
+  { type: 'feat',     scope: 'rindex',         msg: 'role-based exam scheduling UI' },
+];
+
+const stackPrimary   = ['JavaScript', 'TypeScript', 'React', 'Node.js'];
+const stackSecondary = ['ASP.NET', 'SQL Server', '.NET C#', 'PostgreSQL', 'Docker'];
+
+const nowBuilding = lang === 'es' ? 'Construyendo seguridad industrial PWA' : 'Building industrial safety PWA';
+const nowLearning = lang === 'es' ? 'aprendiendo Rust en tardes' : 'learning Rust in evenings';
+const nowReading  = lang === 'es' ? 'leyendo "Designing Data-Intensive Apps"' : 'reading "Designing Data-Intensive Apps"';
+const lastPush    = lang === 'es' ? 'último push hace 3h' : 'last push 3h ago';
+
+const stats = [
+  { v: '4+',  l: lang === 'es' ? 'años de experiencia' : 'years of experience',       glyph: '⚡' },
+  { v: '12+', l: lang === 'es' ? 'proyectos en producción' : 'projects in production',  glyph: '▲' },
+  { v: '15+', l: lang === 'es' ? 'tecnologías dominadas' : 'technologies mastered',     glyph: '⌘' },
+];
+
+const expTitle    = lang === 'es' ? 'Trayectoria' : 'Experience';
+const expCmd      = lang === 'es' ? 'cat experience.json | jq' : 'cat experience.json | jq';
+const verboseLink = lang === 'es' ? '--verbose →' : '--verbose →';
+const featTitle   = lang === 'es' ? 'Proyectos destacados' : 'Featured projects';
+const viewAll     = lang === 'es' ? 'ls --all →' : 'ls --all →';
 ---
 
 <Layout title="Home" description={t.meta.defaultDesc} lang={lang}>
-  <!-- Hero with typewriter -->
+  <!-- Hero with interactive terminal REPL -->
   <Hero lang={lang} />
 
-  <!-- Animated stats -->
-  <Stats lang={lang} />
-
-  <!-- Experience & Education -->
-  <Experience lang={lang} />
-
-  <!-- Featured projects -->
-  <section class="max-w-5xl mx-auto px-6 pb-24">
-    <div class="flex items-center justify-between mb-8" data-scroll>
-      <div>
-        <span class="text-terminal-green text-sm">$</span>
-        <span class="text-terminal-muted text-sm ml-2">{t.index.featuredCmd}</span>
-      </div>
-      <a href={`/${lang}/projects`} class="text-xs text-terminal-muted hover:text-terminal-cyan transition-colors">
-        {t.index.viewAll}
-      </a>
+  <!-- ── $ NOW STRIP ────────────────────────────────────────── -->
+  <section style="padding:18px 56px;border-top:1px solid var(--rule);background:var(--bg-dark)" class="now-strip">
+    <div style="display:flex;align-items:center;gap:18px;font-size:12px;flex-wrap:wrap">
+      <span style="color:var(--muted)">$ now</span>
+      <span style="color:var(--accent)">▸</span>
+      <span class="sans" style="color:var(--ink)">{nowBuilding}</span>
+      <span style="color:var(--muted)">·</span>
+      <span class="sans" style="color:var(--ink-soft)">{nowLearning}</span>
+      <span style="color:var(--muted)">·</span>
+      <span class="sans" style="color:var(--ink-soft)">{nowReading}</span>
+      <span style="flex:1"></span>
+      <span style="color:var(--muted)">{lastPush}</span>
     </div>
+  </section>
 
-    <div class="grid sm:grid-cols-2 gap-4">
-      {featuredProjects.map((project, i) => (
-        <div data-scroll data-delay={String(i + 1)}>
-          <ProjectCard {...project} />
+  <!-- ── COMMIT TICKER ─────────────────────────────────────── -->
+  <section style="padding:14px 0;border-bottom:1px solid var(--rule);background:var(--bg-dark);overflow:hidden">
+    <div class="tm-ticker-wrap">
+      <div class="tm-ticker" style="font-size:12px;color:var(--muted)">
+        {[...commits, ...commits].map((g, i) => (
+          <span>
+            <span style={g.type === 'fix' ? 'color:var(--warn)' : 'color:var(--accent)'}>{g.type}</span>
+            <span style="color:var(--muted)">({g.scope})</span>
+            <span style="color:var(--ink-soft);margin-left:6px">: {g.msg}</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── STACK BAR ──────────────────────────────────────────── -->
+  <section style="padding:24px 56px;border-bottom:1px solid var(--rule)" class="stack-strip">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <span style="font-size:11px;color:var(--muted)">$ stack --primary</span>
+      {stackPrimary.map(s => (
+        <span class="sans" style="font-size:16px;color:var(--ink);font-weight:500">{s}</span>
+      ))}
+      <span style="color:var(--muted);opacity:.4">|</span>
+      <span style="font-size:11px;color:var(--muted)">--secondary</span>
+      {stackSecondary.map(s => (
+        <span class="sans" style="font-size:14px;color:var(--ink-soft)">{s}</span>
+      ))}
+    </div>
+  </section>
+
+  <!-- ── STATS ─────────────────────────────────────────────── -->
+  <section style="padding:40px 56px;border-bottom:1px solid var(--rule)" class="stats-strip">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px" class="stats-grid">
+      {stats.map(s => (
+        <div class="tm-panel" style="padding:24px 28px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div>
+              <div class="tm-display" style="font-size:64px;color:var(--accent);line-height:1">{s.v}</div>
+              <div class="sans" style="font-size:14px;color:var(--ink-soft);margin-top:8px">{s.l}</div>
+            </div>
+            <span style="font-size:24px;color:var(--muted);opacity:.6">{s.glyph}</span>
+          </div>
         </div>
       ))}
     </div>
   </section>
+
+  <!-- ── TRAYECTORIA ───────────────────────────────────────── -->
+  <section style="padding:64px 56px" class="exp-strip">
+    <!-- Section header -->
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:28px;gap:16px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:8px">
+          <span style="color:var(--accent)">$</span> {expCmd}
+        </div>
+        <h2 class="tm-display" style="font-size:44px;margin:0;font-weight:500;letter-spacing:-.04em;line-height:1">
+          <span style="color:var(--muted)">//</span> {expTitle}
+        </h2>
+      </div>
+      <a href={`/${lang}/about`} style="color:var(--accent);background:transparent;border:0;cursor:pointer;font-family:inherit;font-size:12px;text-decoration:none">
+        {verboseLink}
+      </a>
+    </div>
+
+    <!-- Experience rows -->
+    <div style="display:flex;flex-direction:column">
+      {experience.map((e, i) => (
+        <div style="padding:24px 0;border-top:1px solid var(--rule);display:grid;grid-template-columns:140px 1fr 220px;gap:24px" class="exp-row">
+          <div style="font-size:12px;color:var(--muted);padding-top:4px">
+            <div style="color:var(--accent)">{e.from}</div>
+            <div>→ {e.to}</div>
+            <div style="margin-top:6px;opacity:.7">{e.duration}</div>
+            <div style="margin-top:6px;font-size:11px">{e.mode}</div>
+          </div>
+          <div>
+            <div class="sans" style="font-size:20px;font-weight:500;color:var(--ink);letter-spacing:-.01em">{e.role}</div>
+            <div style="font-size:13px;color:var(--ink-soft);margin-top:4px;margin-bottom:14px">
+              <span style="color:var(--accent)">{e.company}</span>
+            </div>
+            <div class="sans" style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--ink-soft)">
+              {e.bullets.map(b => (
+                <div style="display:flex;gap:10px">
+                  <span style="color:var(--accent);margin-top:1px">▸</span>
+                  <span>{b}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start">
+            {e.stack.map(t => (
+              <span class="tm-chip">{t}</span>
+            ))}
+          </div>
+        </div>
+      ))}
+      <div style="border-top:1px solid var(--rule)"></div>
+    </div>
+  </section>
+
+  <!-- ── FEATURED PROJECTS ─────────────────────────────────── -->
+  <section style="padding:32px 56px 80px" class="projects-strip">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:28px;gap:16px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:8px">
+          <span style="color:var(--accent)">$</span> ls ~/projects --featured
+        </div>
+        <h2 class="tm-display" style="font-size:44px;margin:0;font-weight:500;letter-spacing:-.04em;line-height:1">
+          <span style="color:var(--muted)">//</span> {featTitle}
+        </h2>
+      </div>
+      <a href={`/${lang}/projects`} style="color:var(--accent);background:transparent;border:0;cursor:pointer;font-family:inherit;font-size:12px;text-decoration:none">
+        {viewAll}
+      </a>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" class="proj-grid">
+      {featuredProjects.map(p => (
+        <a href={`/${lang}/projects`} class="tm-panel proj-card" style="padding:0;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:inherit;background:var(--panel);border:1px solid var(--rule)">
+          <!-- Card image placeholder -->
+          <div style={`height:200px;position:relative;overflow:hidden;background:repeating-linear-gradient(135deg,var(--bg) 0 16px,var(--bg-dark) 16px 32px)`}>
+            <div style="position:absolute;inset:0;background:radial-gradient(circle at 70% 30%,#a6f55b1a,transparent 60%)"></div>
+            <div style="position:absolute;top:16px;left:16px;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace">
+              ★ ~/projects/{p.id}
+            </div>
+            <div style="position:absolute;bottom:18px;left:18px;font-family:'JetBrains Mono',monospace;font-size:22px;color:var(--accent);letter-spacing:-.02em;font-weight:500">
+              {p.title}<span class="tm-cursor" style="color:var(--accent)"></span>
+            </div>
+            <div style="position:absolute;top:16px;right:16px;font-size:11px;color:var(--accent)">{p.year}</div>
+          </div>
+          <!-- Card body -->
+          <div style="padding:22px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <span style="font-size:11px;color:var(--muted)">{p.kind}</span>
+              <span class="proj-arrow" style="color:var(--muted);font-size:16px">↗</span>
+            </div>
+            <p class="sans" style="font-size:14px;color:var(--ink-soft);margin:10px 0 0;line-height:1.5">{p.tagline}</p>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:14px">
+              {p.stack.map(tech => (
+                <span style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace">#{tech.toLowerCase().replace(/[^a-z0-9]/g,'')}</span>
+              ))}
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
 </Layout>
+
+<style>
+  @media (max-width: 900px) {
+    .now-strip, .stack-strip { padding-left: 24px !important; padding-right: 24px !important; }
+    .stats-grid { grid-template-columns: 1fr !important; }
+    .stats-strip, .exp-strip, .projects-strip { padding-left: 24px !important; padding-right: 24px !important; }
+    .exp-row { grid-template-columns: 1fr !important; }
+    .proj-grid { grid-template-columns: 1fr !important; }
+  }
+</style>

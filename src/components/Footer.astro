@@ -1,24 +1,26 @@
 ---
 import { type Lang } from '../i18n/translations';
-import { useTranslations } from '../i18n/utils';
 
 interface Props {
   lang: Lang;
 }
 
 const { lang } = Astro.props;
-const t = useTranslations(lang);
 ---
 
-<footer class="border-t border-terminal-border mt-20">
-  <div class="max-w-5xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-terminal-muted">
-    <span>
-      <span class="text-terminal-green">$</span> echo "Made with Astro + Tailwind"
-    </span>
-    <div class="flex items-center gap-4">
-      <a href="https://github.com/HectorAlmonte" target="_blank" rel="noopener" class="hover:text-terminal-text transition-colors">GitHub</a>
-      <a href="https://www.linkedin.com/in/hector-almonte-788a4a212/" target="_blank" rel="noopener" class="hover:text-terminal-text transition-colors">LinkedIn</a>
-      <a href={`/${lang}/contact`} class="hover:text-terminal-green transition-colors">{t.footer.contact}</a>
+<footer style="padding:32px 56px;border-top:1px solid var(--rule);background:var(--bg-dark)">
+  <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);gap:24px;flex-wrap:wrap">
+    <div>
+      <span style="color:var(--accent)">➜ ~ </span>
+      echo "Made with care — Astro + Tailwind · v2026.1"
+    </div>
+    <div style="display:flex;gap:18px">
+      <a href="https://github.com/HectorAlmonte" target="_blank" rel="noopener"
+        style="color:var(--accent);text-decoration:none">github↗</a>
+      <a href="https://www.linkedin.com/in/hector-almonte-788a4a212/" target="_blank" rel="noopener"
+        style="color:var(--accent);text-decoration:none">linkedin↗</a>
+      <a href="mailto:hectoralmonte.dev@gmail.com"
+        style="color:var(--accent);text-decoration:none">hectoralmonte.dev@gmail.com</a>
     </div>
   </div>
 </footer>

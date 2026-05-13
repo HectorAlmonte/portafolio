@@ -10,153 +10,239 @@ export function getStaticPaths() {
 const { lang } = Astro.params as { lang: Lang };
 const t = useTranslations(lang);
 
-const stack = {
-  Frontend: ['React', 'Angular', 'HTML5', 'CSS3', 'JavaScript', 'TypeScript'],
-  Backend:  ['Node.js', 'ASP.NET', 'API REST', '.NET (C#)'],
-  Database: ['SQL Server', 'PostgreSQL'],
-  Tools:    ['Git', 'VS Code', 'Postman', 'Docker'],
-};
-
-const skillGroups = [
-  { category: 'frontend', color: 'text-terminal-green',  border: 'border-terminal-green/40',  dot: 'bg-terminal-green',  skills: ['JavaScript', 'TypeScript', 'React', 'Angular', 'HTML5', 'CSS3'] },
-  { category: 'backend',  color: 'text-terminal-cyan',   border: 'border-terminal-cyan/40',   dot: 'bg-terminal-cyan',   skills: ['Node.js', 'ASP.NET', 'API REST', '.NET C#', 'Express'] },
-  { category: 'database', color: 'text-terminal-yellow', border: 'border-terminal-yellow/40', dot: 'bg-terminal-yellow', skills: ['SQL Server', 'PostgreSQL'] },
-  { category: 'tools',    color: 'text-terminal-muted',  border: 'border-terminal-border',    dot: 'bg-terminal-muted',  skills: ['Git', 'Docker', 'VS Code', 'Postman'] },
+const skills = [
+  { k: 'TypeScript / JavaScript', v: 95 },
+  { k: 'React / Next.js',         v: 92 },
+  { k: 'Node.js',                 v: 88 },
+  { k: 'PostgreSQL / SQL Server', v: 85 },
+  { k: '.NET / C# / ASP.NET',    v: 80 },
+  { k: 'Docker / DevOps básico',  v: 70 },
+  { k: 'Diseño de producto',      v: 65 },
 ];
 
-const skillsCmd = '$ ls -la ~/skills/';
+const learning = ['Rust', 'Kubernetes', 'Designing Data-Intensive Apps'];
+
+const timeline = [
+  { y: '2025', t: lang === 'es' ? 'Global Plus · Supervisor' : 'Global Plus · Supervisor', d: lang === 'es' ? 'Industrial safety + PWAs' : 'Industrial safety + PWAs' },
+  { y: '2024', t: 'Rindex shipped',                                                         d: lang === 'es' ? 'SaaS académico — 3 roles' : 'Academic SaaS — 3 roles' },
+  { y: '2023', t: lang === 'es' ? 'Agrosoft · senior' : 'Agrosoft · senior',               d: lang === 'es' ? 'Mapbox + telemetría a escala' : 'Mapbox + telemetry at scale' },
+  { y: '2022', t: lang === 'es' ? 'Agrosoft · in' : 'Agrosoft · start',                    d: lang === 'es' ? 'Primer trabajo full-time' : 'First full-time job' },
+  { y: '2021', t: lang === 'es' ? 'Bachiller' : 'Bachelor\'s',                              d: 'UJCM · Ing. de Sistemas' },
+];
+
+const principles = lang === 'es' ? [
+  { n: '01', t: 'Entender el dominio primero',     d: 'Hablar con quien va a usarlo, ver el problema en persona. Escribir el caso en una frase antes que una línea de código.' },
+  { n: '02', t: 'Construir lo más simple que funcione', d: 'Boring stack > shiny stack. Postgres, Next.js, TypeScript. La novedad la añado donde paga.' },
+  { n: '03', t: 'Cuidar lo invisible',             d: 'Logs, observabilidad, modo offline, errores legibles. El software que dura es el que se puede operar a las 3 de la mañana.' },
+  { n: '04', t: 'Terminar las cosas',              d: 'Un proyecto al 80% es un proyecto al 0%. Prefiero un MVP en producción que un PR mensual.' },
+] : [
+  { n: '01', t: 'Understand the domain first',     d: 'Talk to the people who will use it. See the problem in person. Write the use case in one sentence before one line of code.' },
+  { n: '02', t: 'Build the simplest thing that works', d: 'Boring stack > shiny stack. Postgres, Next.js, TypeScript. I add novelty where it pays off.' },
+  { n: '03', t: 'Care for the invisible',          d: 'Logs, observability, offline mode, readable errors. Software that lasts is software you can operate at 3am.' },
+  { n: '04', t: 'Finish things',                   d: 'A project at 80% is a project at 0%. I prefer an MVP in production over a monthly PR.' },
+];
+
+const facts = lang === 'es' ? [
+  ['name',     'Hector Almonte'],
+  ['role',     'Full Stack Developer'],
+  ['based-in', 'Ilo, Perú · GMT−05:00'],
+  ['speaks',   'es (nativo), en (B2/C1)'],
+  ['hobby',    'pescar al amanecer'],
+  ['signal',   'open-to-work · 2026'],
+] : [
+  ['name',     'Hector Almonte'],
+  ['role',     'Full Stack Developer'],
+  ['based-in', 'Ilo, Peru · GMT−05:00'],
+  ['speaks',   'es (native), en (B2/C1)'],
+  ['hobby',    'fishing at sunrise'],
+  ['signal',   'open-to-work · 2026'],
+];
+
+const quote = lang === 'es'
+  ? '"La complejidad no se elimina, se desplaza. Que se desplace fuera del usuario."'
+  : '"Complexity isn\'t eliminated, it\'s displaced. Let it be displaced away from the user."';
 ---
 
 <Layout title={t.about.title} description={t.meta.about} lang={lang}>
-  <section class="max-w-5xl mx-auto px-6 py-20">
-
-    <!-- Header animado -->
-    <div class="mb-14" data-scroll>
-      <p class="text-terminal-green text-sm mb-3">{t.about.cmd}</p>
-      <h1 class="text-4xl font-bold text-terminal-text leading-tight">
-        {t.about.title}
-      </h1>
-      <!-- Scan line decoration -->
-      <div class="mt-4 flex items-center gap-3">
-        <div class="h-px flex-1 bg-gradient-to-r from-terminal-green via-terminal-cyan to-transparent"></div>
-        <span class="text-xs text-terminal-muted">hector.almonte.sys</span>
-        <div class="h-px w-8 bg-terminal-border"></div>
-      </div>
+  <!-- HERO -->
+  <section style="padding:64px 56px 32px" class="about-hero">
+    <div style="font-size:11px;color:var(--muted);margin-bottom:12px">
+      <span style="color:var(--accent)">$</span> cat about.md
+      <span style="color:var(--rule-soft)"> · </span>
+      <span style="color:var(--muted)">// N.º 02</span>
     </div>
+    <h1 class="tm-display" style="font-size:clamp(56px,8vw,96px);margin:0;line-height:.95">
+      <span style="color:var(--muted)">{'>'}</span>
+      <span style="color:var(--ink)"> about</span><span style="color:var(--muted)">.</span><span class="sans" style="font-style:italic;color:var(--accent)">md</span>
+      <span class="tm-cursor" style="color:var(--accent)"></span>
+    </h1>
+    <p class="sans" style="margin-top:32px;font-size:19px;color:var(--ink-soft);max-width:780px;line-height:1.55">
+      {lang === 'es'
+        ? <>Soy Héctor. Vivo en <span style="color:var(--accent)">Ilo</span> — un puerto al sur de Perú — y escribo software desde 2021. Llevo desde entonces buscando el equilibrio entre código limpio y problemas reales.</>
+        : <>I'm Héctor. I live in <span style="color:var(--accent)">Ilo</span> — a port in southern Peru — and I've been writing software since 2021. Since then I've been chasing the balance between clean code and real problems.</>
+      }
+    </p>
+  </section>
 
-    <!-- Bio + Status -->
-    <div class="grid md:grid-cols-2 gap-6 mb-12">
-      <div class="terminal-card relative overflow-hidden" data-scroll>
-        <!-- Corner accent -->
-        <div class="absolute top-0 right-0 w-16 h-16 overflow-hidden">
-          <div class="absolute top-0 right-0 w-0 h-0 border-l-[64px] border-b-[64px] border-l-transparent border-b-terminal-green/10"></div>
-        </div>
-        <p class="text-xs text-terminal-muted mb-3">// bio</p>
-        <p class="text-terminal-muted text-sm leading-loose">{t.about.bio1}</p>
-        <p class="text-terminal-muted text-sm leading-loose mt-4">{t.about.bio2}</p>
+  <!-- MAIN 3-COL LAYOUT -->
+  <section style="padding:40px 56px 64px;display:grid;grid-template-columns:280px 1fr 320px;gap:40px;align-items:start" class="about-grid">
+
+    <!-- LEFT — facts panel -->
+    <aside style="position:sticky;top:80px;display:flex;flex-direction:column;gap:18px">
+      <div class="tm-panel" style="padding:18px 20px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px">$ stat profile.yml</div>
+        <dl style="margin:0;display:flex;flex-direction:column;gap:11px;font-size:13px">
+          {facts.map(([k, v]) => (
+            <div style="display:flex;justify-content:space-between;gap:12px">
+              <dt style="color:var(--muted)">{k}</dt>
+              <dd class="sans" style="margin:0;color:var(--ink);text-align:right">{v}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
 
-      <div class="space-y-4">
-        <div class="terminal-card" data-scroll data-delay="1">
-          <p class="text-xs text-terminal-muted mb-3">{t.about.statusLabel}</p>
-          <div class="space-y-2.5 text-sm">
-            {t.about.status.map(item => (
-              <div class="flex gap-3 items-start">
-                <span class="text-terminal-green mt-0.5">▶</span>
-                <span class="text-terminal-muted">{item}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <!-- Location card -->
-        <div class="terminal-card" data-scroll data-delay="2">
-          <p class="text-xs text-terminal-muted mb-3">// {lang === 'es' ? 'ubicación' : 'location'}</p>
-          <div class="flex items-center gap-2">
-            <span class="text-terminal-yellow">📍</span>
-            <span class="text-terminal-text text-sm">Ilo, Moquegua, Perú</span>
-          </div>
-          <div class="mt-2 flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-terminal-green animate-pulse"></span>
-            <span class="text-xs text-terminal-muted">{lang === 'es' ? 'Disponible para trabajo remoto' : 'Available for remote work'}</span>
-          </div>
+      <div class="tm-panel" style="padding:18px 20px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">$ echo $QUOTE</div>
+        <p class="serif" style="font-size:17px;font-style:italic;color:var(--ink-soft);margin:0;line-height:1.4">
+          {quote}
+        </p>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px">
+          {lang === 'es' ? '— me lo digo a mí mismo' : '— I tell myself this'}
         </div>
       </div>
-    </div>
+    </aside>
 
-    <!-- Skills — terminal ls style -->
-    <div class="mb-12" id="skills-section">
-      <div class="flex items-center gap-3 mb-6">
-        <span class="text-xs text-terminal-muted">{skillsCmd}</span>
-        <div class="h-px flex-1 bg-terminal-border"></div>
-      </div>
+    <!-- CENTER — long-form prose + principles -->
+    <article class="sans" style="font-size:16px;line-height:1.7;color:var(--ink-soft);max-width:720px">
+      <h2 class="tm-display" style="font-size:28px;color:var(--ink);margin:0 0 16px;letter-spacing:-.02em">
+        <span style="color:var(--accent)">$</span> cat /etc/origin
+      </h2>
+      <p style="margin-top:0">
+        {lang === 'es'
+          ? 'Empecé escribiendo aplicaciones de escritorio en C# para mi propia universidad. Cuando me gradué en 2021, Agrosoft me dejó hacer algo más ambicioso: visualizar flotas enteras de maquinaria agrícola — tractores, cosechadoras — sobre un mapa en tiempo real, con telemetría, alertas y reportes para los dueños de las haciendas.'
+          : 'I started writing desktop applications in C# for my own university. When I graduated in 2021, Agrosoft let me do something more ambitious: visualize entire fleets of agricultural machinery — tractors, harvesters — on a real-time map with telemetry, alerts and reports for farm owners.'
+        }
+      </p>
+      <p>
+        {lang === 'es'
+          ? 'Pasé tres años ahí. Aprendí a discutir con bases de datos enormes sin perder los nervios, a diseñar reportes que un agricultor entiende, y a tratar el código como una herramienta — no como un fin en sí mismo.'
+          : 'I spent three years there. I learned to deal with massive databases without losing my cool, to design reports that a farmer can understand, and to treat code as a tool — not an end in itself.'
+        }
+      </p>
 
-      <div class="terminal-card">
-        <!-- Column headers -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {skillGroups.map(group => (
+      <h2 class="tm-display" style="font-size:28px;color:var(--ink);margin:48px 0 16px;letter-spacing:-.02em">
+        <span style="color:var(--accent)">$</span> cat /etc/current
+      </h2>
+      <p>
+        {lang === 'es'
+          ? <></>
+          : <></>
+        }
+        {lang === 'es'
+          ? <>Desde marzo de 2025 superviso los sistemas de una empresa de almacenaje de <strong style="color:var(--ink);font-weight:600">materiales peligrosos</strong> en Ilo. Mi día se divide entre operaciones y construir el software que las hace posibles: un sistema de seguridad industrial en Next.js + Postgres con modo offline, y un panel multi-tenant que permite consultar <strong style="color:var(--accent);font-weight:600">2,661 materiales</strong> del estándar GRE 2024.</>
+          : <>Since March 2025 I supervise the systems of a <strong style="color:var(--ink);font-weight:600">hazardous materials</strong> storage company in Ilo. My day splits between operations and building the software that makes them possible: an industrial safety system in Next.js + Postgres with offline mode, and a multi-tenant panel to consult <strong style="color:var(--accent);font-weight:600">2,661 materials</strong> from the ERG 2024 standard.</>
+        }
+      </p>
+
+      <h2 class="tm-display" style="font-size:28px;color:var(--ink);margin:48px 0 24px;letter-spacing:-.02em">
+        <span style="color:var(--accent)">$</span> cat /etc/principles
+      </h2>
+      <ul style="padding-left:0;list-style:none;display:flex;flex-direction:column;gap:16px">
+        {principles.map(p => (
+          <li class="value-card" style="padding:18px 22px;border:1px solid var(--rule);border-radius:6px;background:var(--panel);transition:border-color .25s;display:grid;grid-template-columns:40px 1fr;gap:16px">
+            <span class="tm-display" style="font-size:14px;color:var(--accent)">{p.n}</span>
             <div>
-              <div class="flex items-center gap-2 mb-3 pb-2 border-b border-terminal-border">
-                <span class={`w-2 h-2 rounded-full shrink-0 ${group.dot}`}></span>
-                <span class={`text-xs font-semibold ${group.color}`}>{group.category}/</span>
+              <div class="sans" style="font-size:17px;font-weight:500;color:var(--ink);margin-bottom:4px">{p.t}</div>
+              <div class="sans" style="font-size:14px;color:var(--ink-soft)">{p.d}</div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </article>
+
+    <!-- RIGHT — skills + learning + timeline -->
+    <aside style="display:flex;flex-direction:column;gap:24px">
+      <!-- Skills with bars -->
+      <div class="tm-panel" style="padding:18px 20px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:14px">$ ls --skills --primary</div>
+        <div id="skills-list" style="display:flex;flex-direction:column;gap:12px">
+          {skills.map((s, i) => (
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+                <span class="sans" style="color:var(--ink)">{s.k}</span>
+                <span style="color:var(--muted)">{s.v}</span>
               </div>
-              <ul class="space-y-2">
-                {group.skills.map(skill => (
-                  <li
-                    class={`skill-item text-xs flex items-center gap-2 text-terminal-muted
-                            border-l-2 ${group.border} pl-2 py-0.5
-                            hover:text-terminal-text transition-colors cursor-default`}
-                    style="opacity:0; transform:translateY(6px)"
-                  >
-                    {skill}
-                  </li>
-                ))}
-              </ul>
+              <div class="skill-track">
+                <div
+                  class="skill-fill"
+                  style={`width:${s.v}%;animation-delay:${i * 80}ms`}
+                ></div>
+              </div>
             </div>
           ))}
         </div>
       </div>
-    </div>
 
-    <!-- Stack grid -->
-    <div>
-      <div class="flex items-center gap-3 mb-6">
-        <span class="text-xs text-terminal-muted">{t.about.stackCmd}</span>
-        <div class="h-px flex-1 bg-terminal-border"></div>
+      <!-- Learning -->
+      <div class="tm-panel" style="padding:18px 20px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px">$ ls --learning</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          {learning.map(item => (
+            <span class="tm-chip-dim">{item}</span>
+          ))}
+        </div>
       </div>
-      <div class="grid sm:grid-cols-2 gap-4">
-        {Object.entries(stack).map(([category, items], i) => (
-          <div class="terminal-card hover:border-terminal-green/30 transition-colors" data-scroll data-delay={String(i % 2 + 1)}>
-            <p class="text-terminal-cyan text-xs mb-3">"{category}":</p>
-            <div class="flex flex-wrap gap-2">
-              {items.map(item => <span class="tag">{item}</span>)}
+
+      <!-- Timeline -->
+      <div class="tm-panel" style="padding:18px 20px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:14px">$ git log --years</div>
+        <div style="display:flex;flex-direction:column;gap:14px;position:relative">
+          <div style="position:absolute;left:5px;top:6px;bottom:6px;width:1px;background:var(--rule)"></div>
+          {timeline.map((m, i) => (
+            <div style="display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start;position:relative">
+              <span style={`width:11px;height:11px;border-radius:6px;background:${i === 0 ? 'var(--accent)' : 'var(--panel)'};border:1px solid ${i === 0 ? 'var(--accent)' : 'var(--muted)'};z-index:1;margin-top:4px;display:block`}></span>
+              <div>
+                <div style="font-size:11px;color:var(--muted);margin-bottom:2px">{m.y}</div>
+                <div class="sans" style="font-size:13px;color:var(--ink);font-weight:500">{m.t}</div>
+                <div class="sans" style="font-size:12px;color:var(--ink-soft)">{m.d}</div>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+    </aside>
+  </section>
 
+  <!-- CTA STRIP -->
+  <section style="padding:48px 56px 96px;border-top:1px solid var(--rule);background:var(--bg-dark);position:relative;overflow:hidden" class="cta-strip">
+    <div style="position:absolute;inset:0;background:radial-gradient(circle at 80% 50%,#a6f55b11,transparent 50%);pointer-events:none"></div>
+    <div style="position:relative;display:flex;justify-content:space-between;align-items:center;gap:32px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px">$ ./hire-me.sh</div>
+        <h2 class="tm-display" style="font-size:44px;margin:0;color:var(--ink);line-height:1.1">
+          {lang === 'es'
+            ? <>{`¿Buscas a alguien que `}<span style="color:var(--accent)">termine</span>{` las cosas?`}</>
+            : <>{`Looking for someone who `}<span style="color:var(--accent)">ships</span>{`?`}</>
+          }
+        </h2>
+      </div>
+      <a href={`/${lang}/contact`}
+        style="padding:14px 24px;background:var(--accent);color:var(--bg);border-radius:4px;font-size:13px;font-weight:600;border:0;cursor:pointer;font-family:inherit;text-decoration:none">
+        {lang === 'es' ? 'Escríbeme →' : 'Write me →'}
+      </a>
+    </div>
   </section>
 </Layout>
 
-<script>
-  import { gsap } from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+<style>
+  .value-card:hover { border-color: #a6f55b66 !important; }
 
-  gsap.registerPlugin(ScrollTrigger);
-
-  ScrollTrigger.create({
-    trigger: '#skills-section',
-    start: 'top 82%',
-    once: true,
-    onEnter: () => {
-      gsap.to('.skill-item', {
-        opacity: 1,
-        y: 0,
-        duration: 0.35,
-        stagger: 0.04,
-        ease: 'power2.out',
-      });
-    },
-  });
-</script>
+  @media (max-width: 1024px) {
+    .about-grid { grid-template-columns: 1fr !important; }
+    aside[style*="position:sticky"] { position: static !important; }
+  }
+  @media (max-width: 768px) {
+    .about-hero, .about-grid, .cta-strip { padding-left: 24px !important; padding-right: 24px !important; }
+    .about-hero { padding-top: 40px !important; }
+  }
+</style>
