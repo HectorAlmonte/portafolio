@@ -93,14 +93,14 @@ const stackPrimary   = ['JavaScript', 'TypeScript', 'React', 'Node.js'];
 const stackSecondary = ['ASP.NET', 'SQL Server', '.NET C#', 'PostgreSQL', 'Docker'];
 
 const nowBuilding = lang === 'es' ? 'Construyendo seguridad industrial PWA' : 'Building industrial safety PWA';
-const nowLearning = lang === 'es' ? 'aprendiendo Rust en tardes' : 'learning Rust in evenings';
-const nowReading  = lang === 'es' ? 'leyendo "Designing Data-Intensive Apps"' : 'reading "Designing Data-Intensive Apps"';
+const nowLearning = lang === 'es' ? 'explorando animaciones y UX en tardes' : 'exploring animations & UX in evenings';
+const nowReading  = lang === 'es' ? 'leyendo "Refactoring UI"' : 'reading "Refactoring UI"';
 const lastPush    = lang === 'es' ? 'último push hace 3h' : 'last push 3h ago';
 
 const stats = [
-  { v: '4+',  l: lang === 'es' ? 'años de experiencia' : 'years of experience',       glyph: '⚡' },
-  { v: '12+', l: lang === 'es' ? 'proyectos en producción' : 'projects in production',  glyph: '▲' },
-  { v: '15+', l: lang === 'es' ? 'tecnologías dominadas' : 'technologies mastered',     glyph: '⌘' },
+  { v: '4+',   n: 4,   sfx: '+', l: lang === 'es' ? 'años de experiencia' : 'years of experience',       glyph: '⚡' },
+  { v: '12+',  n: 12,  sfx: '+', l: lang === 'es' ? 'proyectos en producción' : 'projects in production', glyph: '▲' },
+  { v: '100%', n: 100, sfx: '%', l: lang === 'es' ? 'proyectos terminados' : 'projects shipped',           glyph: '⌘' },
 ];
 
 const expTitle    = lang === 'es' ? 'Trayectoria' : 'Experience';
@@ -162,11 +162,11 @@ const viewAll     = lang === 'es' ? 'ls --all →' : 'ls --all →';
   <!-- ── STATS ─────────────────────────────────────────────── -->
   <section style="padding:40px 56px;border-bottom:1px solid var(--rule)" class="stats-strip">
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px" class="stats-grid">
-      {stats.map(s => (
-        <div class="tm-panel" style="padding:24px 28px">
+      {stats.map((s, i) => (
+        <div class="tm-panel" style="padding:24px 28px" data-scroll="" data-delay={String(i)}>
           <div style="display:flex;justify-content:space-between;align-items:flex-start">
             <div>
-              <div class="tm-display" style="font-size:64px;color:var(--accent);line-height:1">{s.v}</div>
+              <div class="tm-display" style="font-size:64px;color:var(--accent);line-height:1" data-countup={String(s.n)} data-suffix={s.sfx}>{s.v}</div>
               <div class="sans" style="font-size:14px;color:var(--ink-soft);margin-top:8px">{s.l}</div>
             </div>
             <span style="font-size:24px;color:var(--muted);opacity:.6">{s.glyph}</span>
@@ -196,7 +196,7 @@ const viewAll     = lang === 'es' ? 'ls --all →' : 'ls --all →';
     <!-- Experience rows -->
     <div style="display:flex;flex-direction:column">
       {experience.map((e, i) => (
-        <div style="padding:24px 0;border-top:1px solid var(--rule);display:grid;grid-template-columns:140px 1fr 220px;gap:24px" class="exp-row">
+        <div style="padding:24px 0;border-top:1px solid var(--rule);display:grid;grid-template-columns:140px 1fr 220px;gap:24px" class="exp-row" data-scroll="" data-delay={String(i)}>
           <div style="font-size:12px;color:var(--muted);padding-top:4px">
             <div style="color:var(--accent)">{e.from}</div>
             <div>→ {e.to}</div>
@@ -245,8 +245,8 @@ const viewAll     = lang === 'es' ? 'ls --all →' : 'ls --all →';
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" class="proj-grid">
-      {featuredProjects.map(p => (
-        <a href={`/${lang}/projects`} class="tm-panel proj-card" style="padding:0;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:inherit;background:var(--panel);border:1px solid var(--rule)">
+      {featuredProjects.map((p, i) => (
+        <a href={`/${lang}/projects`} class="tm-panel proj-card" style="padding:0;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:inherit;background:var(--panel);border:1px solid var(--rule)" data-scroll="" data-delay={String(i)}>
           <!-- Card image placeholder -->
           <div style={`height:200px;position:relative;overflow:hidden;background:repeating-linear-gradient(135deg,var(--bg) 0 16px,var(--bg-dark) 16px 32px)`}>
             <div style="position:absolute;inset:0;background:radial-gradient(circle at 70% 30%,#a6f55b1a,transparent 60%)"></div>

@@ -16,6 +16,7 @@ const { title, description, lang } = Astro.props;
 const siteUrl  = 'https://portafolio-eight-self-36.vercel.app';
 const ogTitle  = `${title} | Hector Almonte`;
 const ogDesc   = description ?? 'Ingeniero de Sistemas Full Stack — React, Node.js, ASP.NET, SQL Server';
+const ogImage  = `${siteUrl}/og.svg`;
 ---
 
 <!doctype html>
@@ -32,12 +33,16 @@ const ogDesc   = description ?? 'Ingeniero de Sistemas Full Stack — React, Nod
     <meta property="og:url"         content={siteUrl} />
     <meta property="og:title"       content={ogTitle} />
     <meta property="og:description" content={ogDesc} />
+    <meta property="og:image"       content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:locale"      content={lang === 'es' ? 'es_PE' : 'en_US'} />
 
     <!-- Twitter Card -->
-    <meta name="twitter:card"        content="summary" />
+    <meta name="twitter:card"        content="summary_large_image" />
     <meta name="twitter:title"       content={ogTitle} />
     <meta name="twitter:description" content={ogDesc} />
+    <meta name="twitter:image"       content={ogImage} />
 
     <!-- Canonical -->
     <link rel="canonical" href={siteUrl} />
@@ -50,13 +55,99 @@ const ogDesc   = description ?? 'Ingeniero de Sistemas Full Stack — React, Nod
       <slot />
     </main>
     <Footer lang={lang} />
+
+    <!-- Keyboard shortcuts modal (injected by JS) -->
+    <div id="kb-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:#0e0d0bcc;backdrop-filter:blur(4px);align-items:center;justify-content:center">
+      <div style="background:var(--panel);border:1px solid #a6f55b44;border-radius:8px;padding:32px;min-width:360px;box-shadow:0 0 0 1px #a6f55b22,0 24px 64px #00000066">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:20px">$ man keyboard</div>
+        <table id="kb-table" style="width:100%;border-collapse:collapse;font-size:13px"></table>
+        <div style="margin-top:20px;font-size:11px;color:var(--muted);text-align:center">
+          press <kbd style="padding:2px 6px;border:1px solid var(--rule);border-radius:3px;color:var(--ink)">?</kbd> or
+          <kbd style="padding:2px 6px;border:1px solid var(--rule);border-radius:3px;color:var(--ink)">Esc</kbd> to close
+        </div>
+      </div>
+    </div>
+
     <script>
       document.addEventListener('astro:page-load', () => {
+        function countUp(el) {
+          const target = parseInt(el.dataset.countup, 10);
+          const suffix = el.dataset.suffix ?? '';
+          const duration = 900;
+          const start = performance.now();
+          const tick = (now) => {
+            const t = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - t, 3);
+            el.textContent = Math.round(eased * target) + suffix;
+            if (t < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }
+
         const observer = new IntersectionObserver(
-          entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
-          { threshold: 0.12 }
+          entries => entries.forEach(e => {
+            if (e.isIntersecting) {
+              e.target.classList.add('visible');
+              const delay = parseInt(e.target.dataset.delay ?? '0') * 130;
+              setTimeout(() => {
+                e.target.querySelectorAll('[data-countup]').forEach(countUp);
+              }, delay);
+              observer.unobserve(e.target);
+            }
+          }),
+          { threshold: 0.15 }
         );
         document.querySelectorAll('[data-scroll]').forEach(el => observer.observe(el));
+
+        // ── Keyboard shortcuts ───────────────────────────────────
+        const lang = document.documentElement.lang ?? 'es';
+        const overlay = document.getElementById('kb-overlay');
+        const table   = document.getElementById('kb-table');
+
+        const shortcuts = [
+          { key: 'H', desc: lang === 'es' ? 'Inicio' : 'Home',      action: () => { window.location.href = `/${lang}/`; } },
+          { key: 'A', desc: lang === 'es' ? 'Sobre mí' : 'About',    action: () => { window.location.href = `/${lang}/about`; } },
+          { key: 'P', desc: lang === 'es' ? 'Proyectos' : 'Projects', action: () => { window.location.href = `/${lang}/projects`; } },
+          { key: 'C', desc: lang === 'es' ? 'Contacto' : 'Contact',  action: () => { window.location.href = `/${lang}/contact`; } },
+          { key: 'G', desc: 'GitHub ↗',                               action: () => { window.open('https://github.com/HectorAlmonte', '_blank'); } },
+          { key: '?', desc: lang === 'es' ? 'Mostrar atajos' : 'Show shortcuts', action: toggleOverlay },
+        ];
+
+        if (table) {
+          table.innerHTML = shortcuts.map(s => `
+            <tr style="border-top:1px solid var(--rule)">
+              <td style="padding:10px 0;width:48px">
+                <kbd style="padding:3px 8px;border:1px solid var(--rule);border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent)">${s.key}</kbd>
+              </td>
+              <td style="padding:10px 0;color:var(--ink-soft);font-family:Geist,system-ui,sans-serif">${s.desc}</td>
+            </tr>
+          `).join('');
+        }
+
+        function toggleOverlay() {
+          if (!overlay) return;
+          const open = overlay.style.display !== 'none';
+          overlay.style.display = open ? 'none' : 'flex';
+        }
+
+        if (overlay) {
+          overlay.addEventListener('click', e => { if (e.target === overlay) toggleOverlay(); });
+        }
+
+        function handleKey(e) {
+          const tag = (e.target as HTMLElement).tagName.toLowerCase();
+          if (tag === 'input' || tag === 'textarea' || e.metaKey || e.ctrlKey || e.altKey) return;
+
+          if (e.key === 'Escape') { if (overlay?.style.display !== 'none') toggleOverlay(); return; }
+          if (e.key === '?') { e.preventDefault(); toggleOverlay(); return; }
+
+          const sc = shortcuts.find(s => s.key.toLowerCase() === e.key.toLowerCase() && s.key !== '?');
+          if (sc) sc.action();
+        }
+
+        document.removeEventListener('keydown', (window as any).__kbHandler);
+        (window as any).__kbHandler = handleKey;
+        document.addEventListener('keydown', handleKey);
       });
     </script>
   </body>

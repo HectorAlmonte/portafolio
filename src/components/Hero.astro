@@ -107,7 +107,7 @@ const cvLabel      = 'wget cv.pdf ↓';
         >
           {mailLabel}
         </a>
-        <a href="/hector-almonte-cv.pdf" download
+        <a href={lang === 'es' ? '/hector-almonte-cv-es.pdf' : '/hector-almonte-cv-en.pdf'} download
           style="padding:11px 18px;border-radius:4px;font-size:13px;color:var(--muted);text-decoration:none;display:inline-block">
           {cvLabel}
         </a>
@@ -252,18 +252,41 @@ const cvLabel      = 'wget cv.pdf ↓';
         next.push({ type: 'out', text: `opening ~/contact ...` });
         setTimeout(() => { window.location.href = `/${lang}/contact`; }, 400);
       } else if (cmd === 'cv') {
-        next.push({ type: 'out', text: 'downloading hector-almonte-cv.pdf ...' });
+        const cvFile = lang === 'es' ? '/hector-almonte-cv-es.pdf' : '/hector-almonte-cv-en.pdf';
+        next.push({ type: 'out', text: `downloading ${cvFile.slice(1)} ...` });
         const a = document.createElement('a');
-        a.href = '/hector-almonte-cv.pdf';
-        a.download = 'hector-almonte-cv.pdf';
+        a.href = cvFile;
+        a.download = cvFile.slice(1);
         a.click();
       } else if (cmd === 'clear' || cmd === 'cls') {
         history = [];
         inputEl.value = '';
         render();
         return;
-      } else if (cmd === 'sudo rm -rf /') {
-        next.push({ type: 'err', text: 'nice try 😄' });
+      } else if (cmd === 'sudo hire-me') {
+        next.push({ type: 'out', text: '[sudo] password for hector: ••••••••' });
+        next.push({ type: 'out', text: 'Permission granted. → opening contact.sh ...' });
+        setTimeout(() => { window.location.href = `/${lang}/contact`; }, 900);
+      } else if (cmd === 'git blame hector') {
+        next.push({ type: 'out', text: '  a3f1c08 (hector 2025-01)  stayed debugging until 2am' });
+        next.push({ type: 'out', text: '  b7d2e91 (hector 2024-11)  named a variable "temp2_final_v3"' });
+        next.push({ type: 'out', text: '  c9a4f12 (hector 2024-06)  wrote comment "fix this later"' });
+        next.push({ type: 'out', text: '  d1b5a03 (hector 2023-08)  went fishing instead of code review' });
+      } else if (cmd === 'ls secret' || cmd === 'ls -la secret') {
+        next.push({ type: 'out', text: '  secret/' });
+        next.push({ type: 'out', text: '  ├── fishing-spots.gpx        (classified)' });
+        next.push({ type: 'out', text: '  ├── best-sunrise-ilo.jpg      (beautiful)' });
+        next.push({ type: 'out', text: '  └── salary-expectations.txt   → sudo hire-me' });
+      } else if (cmd === 'neofetch') {
+        next.push({ type: 'out', text: '  OS:       Human 1.0  (Ilo, Peru)' });
+        next.push({ type: 'out', text: '  Shell:    hector@portfolio ~ $' });
+        next.push({ type: 'out', text: '  Stack:    TypeScript · React · Node.js · .NET' });
+        next.push({ type: 'out', text: '  Uptime:   4 years, 4 months' });
+        next.push({ type: 'out', text: '  Status:   open-to-work ● true' });
+      } else if (cmd.startsWith('rm -rf') || cmd.startsWith('sudo rm -rf')) {
+        next.push({ type: 'err', text: 'nice try.' });
+      } else if (cmd === 'echo $salary' || cmd === 'cat salary.txt') {
+        next.push({ type: 'err', text: 'Permission denied.  hint: sudo hire-me' });
       } else {
         next.push({ type: 'err', text: `command not found: ${raw}  ·  try 'help'` });
       }
