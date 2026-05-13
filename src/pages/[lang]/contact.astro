@@ -10,197 +10,208 @@ export function getStaticPaths() {
 const { lang } = Astro.params as { lang: Lang };
 const t = useTranslations(lang);
 
-const contactLinks = [
-  { label: 'email',    value: 'hectoralmoten@gmail.com',              href: 'mailto:hectoralmoten@gmail.com',                      icon: '✉' },
-  { label: 'github',   value: 'github.com/HectorAlmonte',             href: 'https://github.com/HectorAlmonte',                    icon: '⌥' },
-  { label: 'linkedin', value: 'linkedin.com/in/hector-almonte',       href: 'https://www.linkedin.com/in/hector-almonte-788a4a212/', icon: '⊞' },
+const topics = lang === 'es' ? [
+  { id: 'fulltime', label: 'full-time remoto' },
+  { id: 'contract', label: 'freelance / contrato' },
+  { id: 'tech',     label: 'consulta técnica' },
+  { id: 'hi',       label: 'solo decir hola' },
+] : [
+  { id: 'fulltime', label: 'full-time remote' },
+  { id: 'contract', label: 'freelance / contract' },
+  { id: 'tech',     label: 'technical question' },
+  { id: 'hi',       label: 'just saying hi' },
 ];
 
-const pingLines = lang === 'es'
-  ? ['Iniciando conexión...', 'Resolviendo hector.dev', 'Conexión establecida ✓', 'Tiempo de respuesta: &lt;24h']
-  : ['Initiating connection...', 'Resolving hector.dev', 'Connection established ✓', 'Response time: &lt;24h'];
+const channels = [
+  { k: 'Email',    v: 'hectoralmonte.dev@gmail.com', href: 'mailto:hectoralmonte.dev@gmail.com' },
+  { k: 'LinkedIn', v: '/in/hector-almonte',          href: 'https://www.linkedin.com/in/hector-almonte-788a4a212/' },
+  { k: 'GitHub',   v: 'HectorAlmonte',               href: 'https://github.com/HectorAlmonte' },
+];
 ---
 
 <Layout title={t.contact.title} description={t.meta.contact} lang={lang}>
-  <section class="max-w-5xl mx-auto px-6 py-20">
 
-    <!-- Header con ping animado -->
-    <div class="mb-14">
-      <p class="text-terminal-green text-sm mb-4">{t.contact.cmd}</p>
-
-      <!-- Ping terminal block -->
-      <div class="terminal-card max-w-md mb-8" id="ping-block">
-        <div class="flex items-center gap-2 mb-3 pb-3 border-b border-terminal-border">
-          <span class="w-2.5 h-2.5 rounded-full bg-terminal-red"></span>
-          <span class="w-2.5 h-2.5 rounded-full bg-terminal-yellow"></span>
-          <span class="w-2.5 h-2.5 rounded-full bg-terminal-green"></span>
-          <span class="ml-2 text-xs text-terminal-muted">network — ping</span>
-        </div>
-        <div class="text-xs space-y-1 font-mono" id="ping-output">
-          {pingLines.map((line, i) => (
-            <p class="text-terminal-muted ping-line" style="opacity:0" set:html={line}></p>
-          ))}
-        </div>
-      </div>
-
-      <h1 class="text-4xl font-bold text-terminal-text">{t.contact.title}</h1>
-      <div class="mt-3 flex items-center gap-3">
-        <div class="h-px w-12 bg-terminal-green"></div>
-        <div class="h-px flex-1 bg-gradient-to-r from-terminal-green/40 to-transparent"></div>
-      </div>
+  <!-- HEADER -->
+  <section style="padding:64px 56px 32px" class="contact-header">
+    <div style="font-size:11px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <span><span style="color:var(--accent)">$</span> mailto:hector <span style="color:var(--rule-soft)">·</span> <span style="color:var(--muted)">// N.º 04</span></span>
+      <span style="flex:1"></span>
+      <span style="display:flex;align-items:center;gap:8px">
+        <span class="tm-live-dot"></span>
+        <span style="color:var(--ink-soft)">{lang === 'es' ? 'respondo en menos de 24h' : 'reply within 24h'}</span>
+      </span>
     </div>
+    <h1 class="tm-display" style="font-size:clamp(56px,8vw,96px);margin:0;line-height:.95">
+      <span style="color:var(--muted)">{'>'}</span>
+      <span style="color:var(--ink)"> contact</span><span style="color:var(--muted)">.</span><span class="sans" style="font-style:italic;color:var(--accent)">sh</span>
+      <span class="tm-cursor" style="color:var(--accent)"></span>
+    </h1>
+    <p class="sans" style="margin-top:32px;font-size:19px;color:var(--ink-soft);max-width:780px;line-height:1.5">
+      {lang === 'es'
+        ? 'Cuéntame qué estás construyendo. Detalles concretos siempre ayudan — equipo, stack, el problema real. Los problemas aburridos son donde se cocina la mejor ingeniería.'
+        : 'Tell me what you\'re building. Concrete details always help — team, stack, the real problem. Boring problems are where the best engineering happens.'
+      }
+    </p>
+  </section>
 
-    <div class="grid md:grid-cols-2 gap-8">
+  <!-- BODY -->
+  <section style="padding:32px 56px 80px;display:grid;grid-template-columns:1.4fr 1fr;gap:56px" class="contact-body">
+
+    <!-- LEFT — form -->
+    <div class="tm-panel" style="padding:32px">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:24px">
+        <span style="color:var(--accent)">$</span> ./compose.sh
+      </div>
+
+      <!-- Success state (hidden) -->
+      <div id="form-success" style="display:none;padding:40px 0;text-align:center">
+        <div class="tm-display" style="font-size:32px;color:var(--accent);margin-bottom:16px">✓ message queued</div>
+        <div class="sans" style="font-size:15px;color:var(--ink-soft);line-height:1.6">
+          {lang === 'es'
+            ? 'Gracias — respondo en menos de 24h al email que dejaste.'
+            : 'Thanks — I\'ll reply within 24h to the email you provided.'
+          }
+          <div style="display:flex;gap:12px;margin-top:20px;justify-content:center">
+            <a href="https://github.com/HectorAlmonte" target="_blank" rel="noreferrer" style="color:var(--accent)">github↗</a>
+            <a href="/hector-almonte-cv.pdf" download style="color:var(--accent)">↓ cv.pdf</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error state (hidden) -->
+      <div id="form-error" style="display:none;margin-bottom:16px;padding:12px 16px;border:1px solid #f5a05b44;border-radius:4px;background:#f5a05b0a">
+        <span style="color:var(--warn);font-size:12px">
+          ⚠ {lang === 'es' ? 'Error al enviar. Intenta de nuevo o escríbeme directamente.' : 'Send failed. Try again or contact me directly.'}
+        </span>
+      </div>
 
       <!-- Form -->
-      <div class="terminal-card" id="contact-form-card" style="opacity:0; transform: translateX(-20px)">
-        <p class="text-xs text-terminal-muted mb-6">{t.contact.formLabel}</p>
-        <!-- Success message (hidden by default) -->
-        <div id="form-success" class="hidden text-center py-8">
-          <p class="text-terminal-green text-2xl mb-2">✓</p>
-          <p class="text-terminal-text text-sm font-semibold mb-1">
-            {lang === 'es' ? '¡Mensaje enviado!' : 'Message sent!'}
-          </p>
-          <p class="text-terminal-muted text-xs">
-            {lang === 'es' ? 'Te respondo en menos de 24h.' : "I'll reply within 24h."}
-          </p>
+      <form id="contact-form" style="display:flex;flex-direction:column;gap:28px">
+        <div>
+          <label style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace">FROM</label>
+          <input id="name" name="name" type="text" required
+            class="tm-field" placeholder={lang === 'es' ? 'Tu nombre' : 'Your name'} />
         </div>
 
-        <!-- Error message (hidden by default) -->
-        <div id="form-error" class="hidden mb-4 p-3 rounded border border-terminal-red/40 bg-terminal-red/5">
-          <p class="text-terminal-red text-xs">
-            {lang === 'es' ? '⚠ Error al enviar. Intenta de nuevo o escríbeme directamente.' : '⚠ Send failed. Try again or contact me directly.'}
-          </p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px" class="form-2col">
+          <div>
+            <label style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace">EMAIL</label>
+            <input id="email" name="email" type="email" required
+              class="tm-field" placeholder={lang === 'es' ? 'tu@empresa.com' : 'you@company.com'} />
+          </div>
+          <div>
+            <label style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace">
+              COMPANY <span style="opacity:.5">(opt)</span>
+            </label>
+            <input id="company" name="company" type="text"
+              class="tm-field" placeholder={lang === 'es' ? 'Dónde trabajas' : 'Where you work'} />
+          </div>
         </div>
 
-        <form id="contact-form" class="space-y-5">
-          <div class="form-field">
-            <label class="block text-xs text-terminal-green mb-1.5" for="name">
-              <span class="text-terminal-muted">$</span> {t.contact.nameLabel}
-            </label>
-            <input
-              id="name" name="name" type="text" required
-              class="w-full bg-terminal-bg border border-terminal-border rounded px-3 py-2.5 text-sm text-terminal-text
-                     focus:border-terminal-green focus:outline-none focus:shadow-[0_0_8px_rgba(57,211,83,0.25)]
-                     transition-all placeholder:text-terminal-muted/40"
-              placeholder={t.contact.namePlaceholder}
-            />
-          </div>
-
-          <div class="form-field">
-            <label class="block text-xs text-terminal-green mb-1.5" for="email">
-              <span class="text-terminal-muted">$</span> {t.contact.emailLabel}
-            </label>
-            <input
-              id="email" name="email" type="email" required
-              class="w-full bg-terminal-bg border border-terminal-border rounded px-3 py-2.5 text-sm text-terminal-text
-                     focus:border-terminal-green focus:outline-none focus:shadow-[0_0_8px_rgba(57,211,83,0.25)]
-                     transition-all placeholder:text-terminal-muted/40"
-              placeholder={t.contact.emailPlaceholder}
-            />
-          </div>
-
-          <div class="form-field">
-            <label class="block text-xs text-terminal-green mb-1.5" for="message">
-              <span class="text-terminal-muted">$</span> {t.contact.messageLabel}
-            </label>
-            <textarea
-              id="message" name="message" rows="5" required
-              class="w-full bg-terminal-bg border border-terminal-border rounded px-3 py-2.5 text-sm text-terminal-text
-                     focus:border-terminal-green focus:outline-none focus:shadow-[0_0_8px_rgba(57,211,83,0.25)]
-                     transition-all resize-none placeholder:text-terminal-muted/40"
-              placeholder={t.contact.messagePlaceholder}
-            ></textarea>
-          </div>
-
-          <button
-            id="submit-btn"
-            type="submit"
-            class="w-full py-3 bg-terminal-green text-terminal-bg font-semibold rounded text-sm
-                   hover:bg-terminal-green/90 hover:shadow-[0_0_16px_rgba(57,211,83,0.3)]
-                   transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {t.contact.submit}
-          </button>
-        </form>
-      </div>
-
-      <!-- Right panel -->
-      <div class="space-y-4" id="contact-info-panel" style="opacity:0; transform: translateX(20px)">
-
-        <!-- Direct channels -->
-        <div class="terminal-card">
-          <p class="text-xs text-terminal-muted mb-5">{t.contact.directLabel}</p>
-          <div class="space-y-4">
-            {contactLinks.map(link => (
-              <a
-                href={link.href}
-                target="_blank"
-                rel="noopener"
-                class="flex items-center gap-4 group p-2 rounded hover:bg-terminal-border/20 transition-colors"
+        <div>
+          <label style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;display:block;margin-bottom:12px">TOPIC</label>
+          <div style="display:flex;flex-wrap:wrap;gap:6px" id="topic-btns">
+            {topics.map((topic, i) => (
+              <button
+                type="button"
+                data-topic={topic.id}
+                class="topic-btn"
+                style={`padding:9px 14px;border-radius:4px;border:1px solid var(--rule);background:${i === 0 ? 'var(--accent)' : 'transparent'};color:${i === 0 ? 'var(--bg)' : 'var(--ink-soft)'};cursor:pointer;font-family:inherit;font-size:12px;transition:background .15s,color .15s,border-color .15s;${i === 0 ? 'font-weight:600;border-color:var(--accent)' : ''}`}
               >
-                <span class="w-8 h-8 rounded border border-terminal-border flex items-center justify-center
-                             text-terminal-muted group-hover:border-terminal-green group-hover:text-terminal-green
-                             transition-colors shrink-0 text-sm">
-                  {link.icon}
-                </span>
-                <div class="min-w-0">
-                  <p class="text-xs text-terminal-muted">{link.label}</p>
-                  <p class="text-xs text-terminal-cyan group-hover:underline truncate">{link.value}</p>
-                </div>
-                <span class="ml-auto text-terminal-muted group-hover:text-terminal-green transition-colors text-xs shrink-0">→</span>
-              </a>
+                {topic.label}
+              </button>
             ))}
           </div>
+          <input type="hidden" id="topic-value" name="topic" value={topics[0].id} />
         </div>
 
-        <!-- Availability -->
-        <div class="terminal-card">
-          <p class="text-xs text-terminal-muted mb-3">{t.contact.availLabel}</p>
-          <div class="flex items-center gap-3 mb-3">
-            <span class="relative flex h-3 w-3">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-terminal-green opacity-60"></span>
-              <span class="relative inline-flex rounded-full h-3 w-3 bg-terminal-green"></span>
-            </span>
-            <span class="text-terminal-text text-sm">{t.contact.available}</span>
-          </div>
-          <p class="text-xs text-terminal-muted pl-6">{t.contact.responseTime}</p>
+        <div>
+          <label style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace">MESSAGE</label>
+          <textarea id="message" name="message" required
+            class="tm-field"
+            placeholder={lang === 'es'
+              ? 'Cuéntame del rol, el equipo, el problema...'
+              : 'Tell me about the role, the team, the problem...'
+            }
+          ></textarea>
         </div>
 
-        <!-- Location -->
-        <div class="terminal-card">
-          <p class="text-xs text-terminal-muted mb-3">// {lang === 'es' ? 'ubicación' : 'location'}</p>
-          <p class="text-terminal-text text-sm">📍 Ilo, Moquegua, Perú</p>
-          <p class="text-xs text-terminal-muted mt-1">UTC-5</p>
+        <div style="display:flex;align-items:center;gap:16px;padding-top:8px;flex-wrap:wrap">
+          <button id="submit-btn" type="submit"
+            style="padding:12px 22px;background:var(--accent);color:var(--bg);border-radius:4px;font-size:13px;font-weight:600;border:0;cursor:pointer;font-family:inherit;transition:opacity .15s">
+            $ send →
+          </button>
+          <span style="color:var(--muted);font-size:11px">
+            {lang === 'es' ? 'o copia mi email →' : 'or copy my email →'}
+          </span>
+          <button id="copy-email-btn" type="button"
+            style="font-family:'JetBrains Mono',monospace;font-size:12px;padding:8px 14px;background:var(--panel-hi);border:1px solid var(--rule);border-radius:4px;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:8px">
+            hectoralmonte.dev@gmail.com <span style="color:var(--muted)">⧉</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- RIGHT — channels + status -->
+    <aside style="display:flex;flex-direction:column;gap:24px">
+      <div class="tm-panel" style="padding:24px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:16px">$ ls channels</div>
+        <div>
+          {channels.map(ch => (
+            <a href={ch.href} target="_blank" rel="noreferrer" class="channel-row"
+              style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-top:1px solid var(--rule);text-decoration:none;color:inherit;transition:background .15s">
+              <div>
+                <div class="sans" style="font-size:14px;color:var(--ink)">{ch.k}</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:2px">{ch.v}</div>
+              </div>
+              <span class="chan-arr" style="color:var(--muted);font-size:16px;transition:transform .2s,color .2s">↗</span>
+            </a>
+          ))}
+          <div style="border-top:1px solid var(--rule)"></div>
         </div>
       </div>
 
-    </div>
+      <div class="tm-panel" style="padding:24px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px">$ uptime</div>
+        <dl style="margin:0;display:flex;flex-direction:column;gap:10px;font-size:13px">
+          {[
+            ['timezone',    'GMT−05:00',              'var(--ink)'],
+            ['response',    '< 24h',                  'var(--accent)'],
+            ['availability','full-time · 2026',        'var(--accent)'],
+          ].map(([k, v, color]) => (
+            <div style="display:flex;justify-content:space-between">
+              <dt style="color:var(--muted)">{k}</dt>
+              <dd class="sans" style={`margin:0;color:${color}`}>{v}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      <div class="tm-panel" style="padding:24px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px">$ cat /etc/looking-for</div>
+        <p class="sans" style="font-size:14px;line-height:1.6;color:var(--ink-soft);margin:0">
+          {lang === 'es'
+            ? <>{`Un equipo remoto de producto, mid-to-senior, donde pueda crecer en `}<strong style="color:var(--accent)">TypeScript</strong>{`, `}<strong style="color:var(--accent)">sistemas distribuidos</strong>{` y un dominio que importe — salud, energía, agricultura, herramientas para makers.`}</>
+            : <>{`A remote product team, mid-to-senior level, where I can grow in `}<strong style="color:var(--accent)">TypeScript</strong>{`, `}<strong style="color:var(--accent)">distributed systems</strong>{` and a domain that matters — health, energy, agriculture, maker tools.`}</>
+          }
+        </p>
+      </div>
+    </aside>
   </section>
 </Layout>
 
+<style>
+  .channel-row:hover .chan-arr { transform: translateX(4px); color: var(--accent) !important; }
+  .channel-row:first-child { border-top: 0 !important; }
+
+  @media (max-width: 900px) {
+    .contact-header { padding-left: 24px !important; padding-right: 24px !important; padding-top: 40px !important; }
+    .contact-body { grid-template-columns: 1fr !important; padding-left: 24px !important; padding-right: 24px !important; }
+    .form-2col { grid-template-columns: 1fr !important; }
+  }
+</style>
+
 <script>
-  import { gsap } from 'gsap';
-
-  // ── Ping animation ──────────────────────────────────────────
-  const lines = document.querySelectorAll<HTMLElement>('.ping-line');
-  lines.forEach((line, i) => {
-    gsap.to(line, { opacity: 1, duration: 0.3, delay: 0.3 + i * 0.5 });
-  });
-  gsap.to(lines[lines.length - 1], {
-    color: '#39d353',
-    delay: 0.3 + (lines.length - 1) * 0.5 + 0.1,
-  });
-
-  // ── Entrance animations ─────────────────────────────────────
-  gsap.to('#contact-form-card', {
-    opacity: 1, x: 0, duration: 0.6, delay: 0.2, ease: 'power2.out',
-  });
-  gsap.to('#contact-info-panel', {
-    opacity: 1, x: 0, duration: 0.6, delay: 0.4, ease: 'power2.out',
-  });
-
-  // ── EmailJS submit ───────────────────────────────────────────
   import emailjs from '@emailjs/browser';
 
   const SERVICE_ID  = 'service_2bt2yhj';
@@ -209,28 +220,62 @@ const pingLines = lang === 'es'
 
   emailjs.init(PUBLIC_KEY);
 
-  const form     = document.getElementById('contact-form') as HTMLFormElement;
-  const btn      = document.getElementById('submit-btn')   as HTMLButtonElement;
-  const success  = document.getElementById('form-success') as HTMLElement;
-  const errorBox = document.getElementById('form-error')   as HTMLElement;
+  document.addEventListener('astro:page-load', () => {
+    // Topic buttons
+    const topicBtns  = document.querySelectorAll<HTMLButtonElement>('.topic-btn');
+    const topicInput = document.getElementById('topic-value') as HTMLInputElement;
 
-  const originalLabel = btn.textContent ?? '';
+    topicBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        topicBtns.forEach(b => {
+          b.style.background  = 'transparent';
+          b.style.color       = 'var(--ink-soft)';
+          b.style.borderColor = 'var(--rule)';
+          b.style.fontWeight  = '400';
+        });
+        btn.style.background  = 'var(--accent)';
+        btn.style.color       = 'var(--bg)';
+        btn.style.borderColor = 'var(--accent)';
+        btn.style.fontWeight  = '600';
+        if (topicInput) topicInput.value = btn.dataset.topic ?? '';
+      });
+    });
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    btn.disabled    = true;
-    btn.textContent = '$ sending...';
-    errorBox.classList.add('hidden');
-
-    try {
-      await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form);
-      form.classList.add('hidden');
-      success.classList.remove('hidden');
-    } catch {
-      errorBox.classList.remove('hidden');
-      btn.disabled    = false;
-      btn.textContent = originalLabel;
+    // Copy email
+    const copyBtn = document.getElementById('copy-email-btn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard?.writeText('hectoralmonte.dev@gmail.com').catch(() => {});
+        const orig = copyBtn.innerHTML;
+        copyBtn.innerHTML = '<span style="color:var(--accent)">✓</span> copiado';
+        setTimeout(() => { copyBtn.innerHTML = orig; }, 2000);
+      });
     }
+
+    // Form submit
+    const form     = document.getElementById('contact-form') as HTMLFormElement;
+    const btn      = document.getElementById('submit-btn')   as HTMLButtonElement;
+    const success  = document.getElementById('form-success') as HTMLElement;
+    const errorBox = document.getElementById('form-error')   as HTMLElement;
+    if (!form || !btn) return;
+
+    const originalLabel = btn.textContent ?? '';
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      btn.disabled    = true;
+      btn.textContent = '$ sending...';
+      if (errorBox) errorBox.style.display = 'none';
+
+      try {
+        await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form);
+        form.style.display    = 'none';
+        if (success) success.style.display = 'block';
+      } catch {
+        if (errorBox) errorBox.style.display = 'block';
+        btn.disabled    = false;
+        btn.textContent = originalLabel;
+      }
+    });
   });
 </script>
