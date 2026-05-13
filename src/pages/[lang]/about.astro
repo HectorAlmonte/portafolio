@@ -20,7 +20,7 @@ const skills = [
   { k: 'Diseño de producto',      v: 65 },
 ];
 
-const learning = ['Rust', 'Kubernetes', 'Designing Data-Intensive Apps'];
+const learning = ['Framer Motion', 'Design Systems', 'WCAG Accessibility', 'Three.js / WebGL', 'Figma to code'];
 
 const timeline = [
   { y: '2025', t: lang === 'es' ? 'Global Plus · Supervisor' : 'Global Plus · Supervisor', d: lang === 'es' ? 'Industrial safety + PWAs' : 'Industrial safety + PWAs' },
@@ -162,23 +162,12 @@ const quote = lang === 'es'
 
     <!-- RIGHT — skills + learning + timeline -->
     <aside style="display:flex;flex-direction:column;gap:24px">
-      <!-- Skills with bars -->
+      <!-- Skills as chips -->
       <div class="tm-panel" style="padding:18px 20px">
         <div style="font-size:11px;color:var(--muted);margin-bottom:14px">$ ls --skills --primary</div>
-        <div id="skills-list" style="display:flex;flex-direction:column;gap:12px">
-          {skills.map((s, i) => (
-            <div>
-              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
-                <span class="sans" style="color:var(--ink)">{s.k}</span>
-                <span style="color:var(--muted)">{s.v}</span>
-              </div>
-              <div class="skill-track">
-                <div
-                  class="skill-fill"
-                  style={`width:${s.v}%;animation-delay:${i * 80}ms`}
-                ></div>
-              </div>
-            </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          {skills.map(s => (
+            <span class="tm-chip">{s.k}</span>
           ))}
         </div>
       </div>

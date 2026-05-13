@@ -92,13 +92,18 @@ body {
 }
 
 /* ── Typing animation (for the hero "almonte" word) ──────── */
+@keyframes tm-show-caret { to { border-right-color: var(--accent); } }
+
 .tm-typed {
   display: inline-block;
   overflow: hidden;
   white-space: nowrap;
   vertical-align: bottom;
-  border-right: 0.55ch solid var(--accent);
-  animation: tm-type 1.6s steps(14) 0.4s both, tm-caret 0.9s steps(1) 2s infinite;
+  border-right: 0.55ch solid transparent; /* hidden until typing starts */
+  animation:
+    tm-type 1.6s steps(14) 0.4s both,
+    tm-show-caret 0.01s linear 0.38s forwards,
+    tm-caret 0.9s steps(1) 2s infinite;
 }
 
 /* ── Live dot ─────────────────────────────────────────────── */
