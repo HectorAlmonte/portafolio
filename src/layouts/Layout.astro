@@ -58,7 +58,7 @@ const ogImage  = `${siteUrl}/og.svg`;
 
     <!-- Keyboard shortcuts modal (injected by JS) -->
     <div id="kb-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:#0e0d0bcc;backdrop-filter:blur(4px);align-items:center;justify-content:center">
-      <div style="background:var(--panel);border:1px solid #a6f55b44;border-radius:8px;padding:32px;min-width:360px;box-shadow:0 0 0 1px #a6f55b22,0 24px 64px #00000066">
+      <div style="background:var(--panel);border:1px solid #a6f55b44;border-radius:8px;padding:clamp(16px,5vw,32px);width:min(400px,calc(100vw - 48px));box-shadow:0 0 0 1px #a6f55b22,0 24px 64px #00000066">
         <div style="font-size:11px;color:var(--muted);margin-bottom:20px">$ man keyboard</div>
         <table id="kb-table" style="width:100%;border-collapse:collapse;font-size:13px"></table>
         <div style="margin-top:20px;font-size:11px;color:var(--muted);text-align:center">

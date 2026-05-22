@@ -205,9 +205,13 @@ const channels = [
   .channel-row:first-child { border-top: 0 !important; }
 
   @media (max-width: 900px) {
-    .contact-header { padding-left: 24px !important; padding-right: 24px !important; padding-top: 40px !important; }
-    .contact-body { grid-template-columns: 1fr !important; padding-left: 24px !important; padding-right: 24px !important; }
-    .form-2col { grid-template-columns: 1fr !important; }
+    .contact-header { padding-top: 40px !important; }
+    .contact-body   { grid-template-columns: 1fr !important; gap: 32px !important; }
+    .form-2col      { grid-template-columns: 1fr !important; }
+  }
+  @media (max-width: 480px) {
+    #submit-btn { width: 100%; }
+    #copy-email-btn { font-size: 11px !important; }
   }
 </style>
 

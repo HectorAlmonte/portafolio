@@ -267,6 +267,46 @@ body {
 .tm-field::placeholder { color: var(--muted); }
 textarea.tm-field { resize: vertical; min-height: 120px; }
 
+/* ── Responsive section padding (clamp replaces 56px inline) ─ */
+.proj-header, .proj-toolbar, .proj-list, .proj-cta,
+.pd-header, .pd-body,
+.contact-header, .contact-body,
+.about-hero, .about-body {
+  padding-left:  clamp(20px, 5vw, 56px) !important;
+  padding-right: clamp(20px, 5vw, 56px) !important;
+}
+.pd-mockup {
+  padding-left:  clamp(20px, 5vw, 56px) !important;
+  padding-right: clamp(20px, 5vw, 56px) !important;
+}
+
+/* ── Mobile global fixes ──────────────────────────────────── */
+@media (max-width: 640px) {
+  /* Paragraph font-size legible on small screens */
+  .sans { font-size: 15px; }
+
+  /* Contact form: email+company stack vertically */
+  .form-2col { grid-template-columns: 1fr !important; }
+
+  /* Project detail: pre code block */
+  pre { font-size: 11px !important; }
+
+  /* CTA buttons stack on very small screens */
+  .pd-mockup { padding-top: 0 !important; }
+
+  /* Keyboard modal table: smaller font */
+  #kb-overlay table { font-size: 12px; }
+
+  /* Stats cards: text adjust */
+  #stats-grid .text-3xl { font-size: 1.5rem; }
+}
+
+/* ── Tablet fixes (768–900px) ─────────────────────────────── */
+@media (max-width: 900px) and (min-width: 641px) {
+  .pd-body    { grid-template-columns: 1fr !important; }
+  .pd-mockup  { grid-template-columns: 1fr !important; }
+}
+
 /* ── Row hover (projects list) ────────────────────────────── */
 .proj-row {
   transition: background .15s;
