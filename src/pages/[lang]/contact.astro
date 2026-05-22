@@ -86,7 +86,7 @@ const channels = [
       </div>
 
       <!-- Form -->
-      <form id="contact-form" style="display:flex;flex-direction:column;gap:28px">
+      <form id="contact-form" data-lang={lang} style="display:flex;flex-direction:column;gap:28px">
         <div>
           <label style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace">FROM</label>
           <input id="name" name="name" type="text" required
@@ -245,9 +245,10 @@ const channels = [
     const copyBtn = document.getElementById('copy-email-btn');
     if (copyBtn) {
       copyBtn.addEventListener('click', () => {
+        const lang = (document.getElementById('contact-form') as HTMLFormElement)?.dataset.lang ?? 'es';
         navigator.clipboard?.writeText('hectoralmonte.dev@gmail.com').catch(() => {});
         const orig = copyBtn.innerHTML;
-        copyBtn.innerHTML = '<span style="color:var(--accent)">✓</span> copiado';
+        copyBtn.innerHTML = `<span style="color:var(--accent)">✓</span> ${lang === 'es' ? 'copiado' : 'copied'}`;
         setTimeout(() => { copyBtn.innerHTML = orig; }, 2000);
       });
     }
@@ -259,19 +260,21 @@ const channels = [
     const errorBox = document.getElementById('form-error')   as HTMLElement;
     if (!form || !btn) return;
 
+    const lang = form.dataset.lang ?? 'es';
     const originalLabel = btn.textContent ?? '';
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       btn.disabled    = true;
-      btn.textContent = '$ sending...';
+      btn.textContent = lang === 'es' ? '$ enviando...' : '$ sending...';
       if (errorBox) errorBox.style.display = 'none';
 
       try {
         await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form);
         form.style.display    = 'none';
         if (success) success.style.display = 'block';
-      } catch {
+      } catch (err) {
+        console.error('[contact] EmailJS error:', err);
         if (errorBox) errorBox.style.display = 'block';
         btn.disabled    = false;
         btn.textContent = originalLabel;
