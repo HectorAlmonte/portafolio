@@ -212,13 +212,7 @@ const channels = [
 </style>
 
 <script>
-  import emailjs from '@emailjs/browser';
-
-  const SERVICE_ID  = 'service_2bt2yhj';
-  const TEMPLATE_ID = 'template_qmzat3h';
-  const PUBLIC_KEY  = '9I6ONW00vk1g5vjB0';
-
-  emailjs.init(PUBLIC_KEY);
+  const W3F_KEY = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? '';
 
   document.addEventListener('astro:page-load', () => {
     // Topic buttons
@@ -270,11 +264,32 @@ const channels = [
       if (errorBox) errorBox.style.display = 'none';
 
       try {
-        await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form);
-        form.style.display    = 'none';
-        if (success) success.style.display = 'block';
+        const data = new FormData(form);
+        const payload = {
+          access_key: W3F_KEY,
+          name:    data.get('name'),
+          email:   data.get('email'),
+          company: data.get('company') || '—',
+          topic:   data.get('topic'),
+          message: data.get('message'),
+          subject: `[Portfolio] ${data.get('topic')} — ${data.get('name')}`,
+        };
+
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body:    JSON.stringify(payload),
+        });
+        const result = await res.json();
+
+        if (result.success) {
+          form.style.display = 'none';
+          if (success) success.style.display = 'block';
+        } else {
+          throw new Error(result.message ?? 'Unknown error');
+        }
       } catch (err) {
-        console.error('[contact] EmailJS error:', err);
+        console.error('[contact] Web3Forms error:', err);
         if (errorBox) errorBox.style.display = 'block';
         btn.disabled    = false;
         btn.textContent = originalLabel;
