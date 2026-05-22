@@ -13,9 +13,9 @@ const alternatePath  = getLocalizedPath(currentPath, alternateLang);
 
 const links = [
   { id: '',         href: `/${lang}/`,         label: '~' },
-  { id: 'about',    href: `/${lang}/about`,     label: 'about' },
-  { id: 'projects', href: `/${lang}/projects`,  label: 'projects' },
-  { id: 'contact',  href: `/${lang}/contact`,   label: 'contact' },
+  { id: 'about',    href: `/${lang}/about`,     label: lang === 'es' ? 'sobre mí'  : 'about'    },
+  { id: 'projects', href: `/${lang}/projects`,  label: lang === 'es' ? 'proyectos' : 'projects'  },
+  { id: 'contact',  href: `/${lang}/contact`,   label: lang === 'es' ? 'contacto'  : 'contact'   },
 ];
 
 const pathSegments = currentPath.split('/').filter(Boolean);
@@ -60,7 +60,7 @@ const currentPage  = pathSegments[1] ?? '';
 
   <!-- Live dot -->
   <span style="display:inline-flex;align-items:center;font-size:11px;color:var(--ink-soft)">
-    <span class="tm-live-dot"></span>live
+    <span class="tm-live-dot"></span>{lang === 'es' ? 'activo' : 'live'}
   </span>
 
   <span style="flex:1"></span>
@@ -123,7 +123,7 @@ const currentPage  = pathSegments[1] ?? '';
     </a>
     <button
       id="menu-btn"
-      aria-label="Menu"
+      aria-label={lang === 'es' ? 'Menú' : 'Menu'}
       style="padding:8px;background:transparent;border:0;color:var(--muted);cursor:pointer"
     >
       <svg id="icon-open" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">

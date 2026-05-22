@@ -12,7 +12,7 @@ const t = useTranslations(lang);
 
 const projects = [
   {
-    id: 'gre-materiales', title: 'gre-materiales', year: '2025',
+    id: 'gre-materiales', title: 'gre-materiales', year: '2025', cat: 'product',
     kind: lang === 'es' ? 'producto propio · PWA' : 'own product · PWA',
     featured: true,
     tagline: lang === 'es'
@@ -22,7 +22,7 @@ const projects = [
     github: 'https://github.com/HectorAlmonte',
   },
   {
-    id: 'rindex', title: 'rindex', year: '2024',
+    id: 'rindex', title: 'rindex', year: '2024', cat: 'product',
     kind: lang === 'es' ? 'SaaS académico' : 'academic SaaS',
     featured: true,
     tagline: lang === 'es'
@@ -32,7 +32,7 @@ const projects = [
     github: 'https://github.com/HectorAlmonte',
   },
   {
-    id: 'agrosoft-fleet', title: 'agrosoft-fleet', year: '2022–2025',
+    id: 'agrosoft-fleet', title: 'agrosoft-fleet', year: '2022–2025', cat: 'work',
     kind: lang === 'es' ? 'trabajo · sistema interno' : 'work · internal system',
     featured: false,
     tagline: lang === 'es'
@@ -42,7 +42,7 @@ const projects = [
     github: 'https://github.com/HectorAlmonte',
   },
   {
-    id: 'industrial-safety', title: 'industrial-safety', year: '2025',
+    id: 'industrial-safety', title: 'industrial-safety', year: '2025', cat: 'work',
     kind: lang === 'es' ? 'trabajo · Global Plus' : 'work · Global Plus',
     featured: false,
     tagline: lang === 'es'
@@ -52,7 +52,7 @@ const projects = [
     github: 'https://github.com/HectorAlmonte',
   },
   {
-    id: 'bj-architect', title: 'bj-architect', year: '2024',
+    id: 'bj-architect', title: 'bj-architect', year: '2024', cat: 'product',
     kind: lang === 'es' ? 'herramienta personal' : 'personal tool',
     featured: false,
     tagline: lang === 'es'
@@ -62,13 +62,13 @@ const projects = [
     github: 'https://github.com/HectorAlmonte',
   },
   {
-    id: 'portfolio', title: 'portfolio', year: '2024',
+    id: 'portfolio', title: 'portfolio', year: '2024', cat: 'product',
     kind: lang === 'es' ? 'proyecto personal' : 'personal project',
     featured: false,
     tagline: lang === 'es'
       ? 'Este portafolio. Astro 5, TailwindCSS, tema Terminal Evolved, soporte bilingüe ES/EN.'
       : 'This portfolio. Astro 5, TailwindCSS, Terminal Evolved theme, ES/EN bilingual support.',
-    stack: ['Astro 5', 'TailwindCSS', 'TypeScript', 'EmailJS'],
+    stack: ['Astro 5', 'TailwindCSS', 'TypeScript', 'Web3Forms'],
     github: 'https://github.com/HectorAlmonte/portafolio',
     demo: 'https://portafolio-eight-self-36.vercel.app',
   },
@@ -110,10 +110,10 @@ const colStack   = 'stack';
       <span style="font-size:11px;color:var(--muted)">$ filter --by</span>
       <div style="display:flex;gap:6px;flex-wrap:wrap" id="filter-btns">
         {[
-          { id: 'all',      label: 'all',      n: projects.length },
-          { id: 'featured', label: 'featured', n: projects.filter(p => p.featured).length },
-          { id: 'producto', label: 'producto', n: projects.filter(p => p.kind.includes('producto')).length },
-          { id: 'trabajo',  label: 'trabajo',  n: projects.filter(p => p.kind.includes('trabajo')).length },
+          { id: 'all',      label: lang === 'es' ? 'todos'       : 'all',      n: projects.length },
+          { id: 'featured', label: lang === 'es' ? 'destacados'  : 'featured', n: projects.filter(p => p.featured).length },
+          { id: 'product',  label: lang === 'es' ? 'producto'    : 'product',  n: projects.filter(p => p.cat === 'product').length },
+          { id: 'work',     label: lang === 'es' ? 'trabajo'     : 'work',     n: projects.filter(p => p.cat === 'work').length },
         ].map(f => (
           <button
             data-filter={f.id}
@@ -145,6 +145,7 @@ const colStack   = 'stack';
         href={`/${lang}/projects/${p.id}`}
         class="proj-row proj-cols"
         data-kind={p.kind}
+        data-cat={p.cat}
         data-featured={String(p.featured)}
         style="grid-template-columns:96px 1.6fr 2.2fr 1.4fr 32px"
       >
@@ -229,12 +230,12 @@ const colStack   = 'stack';
 
       let visible = 0;
       rows.forEach(row => {
-        const kind     = row.dataset.kind ?? '';
+        const cat      = row.dataset.cat ?? '';
         const featured = row.dataset.featured === 'true';
         let show = false;
-        if (f === 'all')      show = true;
+        if (f === 'all')           show = true;
         else if (f === 'featured') show = featured;
-        else                  show = kind.includes(f);
+        else                       show = cat === f;
 
         row.style.display = show ? 'grid' : 'none';
         if (show) visible++;

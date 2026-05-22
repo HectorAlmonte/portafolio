@@ -12,7 +12,7 @@ const { lang } = Astro.props;
   <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);gap:24px;flex-wrap:wrap">
     <div>
       <span style="color:var(--accent)">➜ ~ </span>
-      echo "Made with care — Astro + Tailwind · v2026.1"
+      echo "{lang === 'es' ? 'Hecho con cuidado — Astro + Tailwind · v2026.1' : 'Made with care — Astro + Tailwind · v2026.1'}"
     </div>
     <div style="display:flex;gap:18px">
       <a href="https://github.com/HectorAlmonte" target="_blank" rel="noopener"

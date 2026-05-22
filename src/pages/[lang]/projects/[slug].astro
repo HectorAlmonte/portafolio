@@ -187,7 +187,7 @@ const stackGrouped = project.stack.reduce((acc, tech) => {
             <a href={project.demo} target="_blank" rel="noreferrer"
               class="link-row"
               style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--rule);text-decoration:none;color:var(--ink-soft);transition:color .15s">
-              <span class="sans" style="font-size:13px">Demo en vivo</span>
+              <span class="sans" style="font-size:13px">{lang === 'es' ? 'Demo en vivo' : 'Live demo'}</span>
               <span style="color:var(--muted);transition:color .15s,transform .2s">↗</span>
             </a>
           )}
