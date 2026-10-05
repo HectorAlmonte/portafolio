@@ -23,7 +23,7 @@ const topics = lang === 'es' ? [
 ];
 
 const channels = [
-  { k: 'Email',    v: 'hectoralmonte.dev@gmail.com', href: 'mailto:hectoralmonte.dev@gmail.com' },
+  { k: 'Email',    v: 'hectoralmoten@gmail.com', href: 'mailto:hectoralmoten@gmail.com' },
   { k: 'LinkedIn', v: '/in/hector-almonte',          href: 'https://www.linkedin.com/in/hector-almonte-788a4a212/' },
   { k: 'GitHub',   v: 'HectorAlmonte',               href: 'https://github.com/HectorAlmonte' },
 ];
@@ -146,7 +146,7 @@ const channels = [
           </span>
           <button id="copy-email-btn" type="button"
             style="font-family:'JetBrains Mono',monospace;font-size:12px;padding:8px 14px;background:var(--panel-hi);border:1px solid var(--rule);border-radius:4px;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:8px">
-            hectoralmonte.dev@gmail.com <span style="color:var(--muted)">⧉</span>
+            hectoralmoten@gmail.com <span style="color:var(--muted)">⧉</span>
           </button>
         </div>
       </form>
@@ -244,7 +244,7 @@ const channels = [
     if (copyBtn) {
       copyBtn.addEventListener('click', () => {
         const lang = (document.getElementById('contact-form') as HTMLFormElement)?.dataset.lang ?? 'es';
-        navigator.clipboard?.writeText('hectoralmonte.dev@gmail.com').catch(() => {});
+        navigator.clipboard?.writeText('hectoralmoten@gmail.com').catch(() => {});
         const orig = copyBtn.innerHTML;
         copyBtn.innerHTML = `<span style="color:var(--accent)">✓</span> ${lang === 'es' ? 'copiado' : 'copied'}`;
         setTimeout(() => { copyBtn.innerHTML = orig; }, 2000);
