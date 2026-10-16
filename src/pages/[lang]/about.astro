@@ -1,7 +1,11 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import Scene from '../../components/Scene.astro';
+import Ridge from '../../components/Ridge.astro';
+import Icon from '../../components/Icon.astro';
 import { languages, type Lang } from '../../i18n/translations';
-import { useTranslations } from '../../i18n/utils';
+import { useTranslations, cvPath } from '../../i18n/utils';
+import Timeline from '../../components/Timeline.astro';
 
 export function getStaticPaths() {
   return languages.map(lang => ({ params: { lang } }));
@@ -9,229 +13,205 @@ export function getStaticPaths() {
 
 const { lang } = Astro.params as { lang: Lang };
 const t = useTranslations(lang);
+const es = lang === 'es';
 
-const skills = [
-  { k: 'TypeScript / JavaScript', v: 95 },
-  { k: 'React / Next.js',         v: 92 },
-  { k: 'Node.js',                 v: 88 },
-  { k: 'PostgreSQL / SQL Server', v: 85 },
-  { k: '.NET / C# / ASP.NET',    v: 80 },
-  { k: 'Docker / DevOps básico',  v: 70 },
-  { k: 'Diseño de producto',      v: 65 },
+const facts = es
+  ? [
+      ['Nombre', 'Hector Gabriel Almonte Salazar'],
+      ['Rol', 'Ingeniero de Sistemas · Full Stack'],
+      ['Base', 'Ilo, Perú · GMT−5'],
+      ['Idiomas', 'Español (nativo), inglés (B2/C1)'],
+      ['Fuera del código', 'Pescar al amanecer'],
+      ['Disponibilidad', 'Abierto a roles remotos'],
+    ]
+  : [
+      ['Name', 'Hector Gabriel Almonte Salazar'],
+      ['Role', 'Systems Engineer · Full Stack'],
+      ['Based in', 'Ilo, Peru · GMT−5'],
+      ['Languages', 'Spanish (native), English (B2/C1)'],
+      ['Off the clock', 'Fishing at sunrise'],
+      ['Availability', 'Open to remote roles'],
+    ];
+
+const principles = es
+  ? [
+      { h: 'Entender el dominio primero', p: 'Hablar con quien va a usarlo y ver el problema en persona. Escribir el caso en una frase antes que una línea de código.' },
+      { h: 'Lo más simple que funcione', p: 'Stack aburrido antes que stack brillante: Postgres, Next.js, TypeScript. La novedad la añado donde paga.' },
+      { h: 'Cuidar lo invisible', p: 'Logs, modo offline, errores legibles. El software que dura es el que se puede operar a las 3 de la mañana.' },
+      { h: 'Terminar las cosas', p: 'Un proyecto al 80% es un proyecto al 0%. Prefiero un MVP en producción que un borrador eterno.' },
+    ]
+  : [
+      { h: 'Understand the domain first', p: 'Talk to the people who will use it and see the problem in person. Write the use case in one sentence before one line of code.' },
+      { h: 'The simplest thing that works', p: 'Boring stack over shiny stack: Postgres, Next.js, TypeScript. I add novelty where it pays off.' },
+      { h: 'Care for the invisible', p: 'Logs, offline mode, readable errors. Software that lasts is software you can operate at 3am.' },
+      { h: 'Finish things', p: 'A project at 80% is a project at 0%. I prefer an MVP in production over an endless draft.' },
+    ];
+
+const toolbox = [
+  { h: es ? 'Uso a diario' : 'Daily drivers', items: ['TypeScript', 'JavaScript', 'React', 'Next.js', 'Node.js', 'PostgreSQL'] },
+  { h: es ? 'Con experiencia' : 'Experienced with', items: ['.NET C#', 'ASP.NET', 'SQL Server', 'Docker', 'Mapbox', 'PWA'] },
+  { h: es ? 'Aprendiendo' : 'Learning', items: ['Design Systems', es ? 'Accesibilidad WCAG' : 'WCAG accessibility', 'Three.js / WebGL', 'Motion design'] },
 ];
 
-const learning = ['Framer Motion', 'Design Systems', 'WCAG Accessibility', 'Three.js / WebGL', 'Figma to code'];
-
-const timeline = [
-  { y: '2025', t: lang === 'es' ? 'Global Plus · Supervisor' : 'Global Plus · Supervisor', d: lang === 'es' ? 'Industrial safety + PWAs' : 'Industrial safety + PWAs' },
-  { y: '2024', t: 'Rindex shipped',                                                         d: lang === 'es' ? 'SaaS académico — 3 roles' : 'Academic SaaS — 3 roles' },
-  { y: '2023', t: lang === 'es' ? 'Agrosoft · senior' : 'Agrosoft · senior',               d: lang === 'es' ? 'Mapbox + telemetría a escala' : 'Mapbox + telemetry at scale' },
-  { y: '2022', t: lang === 'es' ? 'Agrosoft · in' : 'Agrosoft · start',                    d: lang === 'es' ? 'Primer trabajo full-time' : 'First full-time job' },
-  { y: '2021', t: lang === 'es' ? 'Bachiller' : 'Bachelor\'s',                              d: 'UJCM · Ing. de Sistemas' },
-];
-
-const principles = lang === 'es' ? [
-  { n: '01', t: 'Entender el dominio primero',     d: 'Hablar con quien va a usarlo, ver el problema en persona. Escribir el caso en una frase antes que una línea de código.' },
-  { n: '02', t: 'Construir lo más simple que funcione', d: 'Boring stack > shiny stack. Postgres, Next.js, TypeScript. La novedad la añado donde paga.' },
-  { n: '03', t: 'Cuidar lo invisible',             d: 'Logs, observabilidad, modo offline, errores legibles. El software que dura es el que se puede operar a las 3 de la mañana.' },
-  { n: '04', t: 'Terminar las cosas',              d: 'Un proyecto al 80% es un proyecto al 0%. Prefiero un MVP en producción que un PR mensual.' },
-] : [
-  { n: '01', t: 'Understand the domain first',     d: 'Talk to the people who will use it. See the problem in person. Write the use case in one sentence before one line of code.' },
-  { n: '02', t: 'Build the simplest thing that works', d: 'Boring stack > shiny stack. Postgres, Next.js, TypeScript. I add novelty where it pays off.' },
-  { n: '03', t: 'Care for the invisible',          d: 'Logs, observability, offline mode, readable errors. Software that lasts is software you can operate at 3am.' },
-  { n: '04', t: 'Finish things',                   d: 'A project at 80% is a project at 0%. I prefer an MVP in production over a monthly PR.' },
-];
-
-const facts = lang === 'es' ? [
-  ['name',     'Hector Almonte'],
-  ['role',     'Full Stack Developer'],
-  ['based-in', 'Ilo, Perú · GMT−05:00'],
-  ['speaks',   'es (nativo), en (B2/C1)'],
-  ['hobby',    'pescar al amanecer'],
-  ['signal',   'open-to-work · 2026'],
-] : [
-  ['name',     'Hector Almonte'],
-  ['role',     'Full Stack Developer'],
-  ['based-in', 'Ilo, Peru · GMT−05:00'],
-  ['speaks',   'es (native), en (B2/C1)'],
-  ['hobby',    'fishing at sunrise'],
-  ['signal',   'open-to-work · 2026'],
-];
-
-const quote = lang === 'es'
-  ? '"La complejidad no se elimina, se desplaza. Que se desplace fuera del usuario."'
-  : '"Complexity isn\'t eliminated, it\'s displaced. Let it be displaced away from the user."';
+const quote = es
+  ? 'La complejidad no se elimina, se desplaza. Que se desplace lejos del usuario.'
+  : "Complexity isn't eliminated, it's displaced. Let it be displaced away from the user.";
 ---
 
-<Layout title={t.about.title} description={t.meta.about} lang={lang}>
-  <!-- HERO -->
-  <section style="padding:64px 56px 32px" class="about-hero">
-    <div style="font-size:11px;color:var(--muted);margin-bottom:12px">
-      <span style="color:var(--accent)">$</span> cat about.md
-      <span style="color:var(--rule-soft)"> · </span>
-      <span style="color:var(--muted)">// N.º 02</span>
-    </div>
-    <h1 class="tm-display" style="font-size:clamp(56px,8vw,96px);margin:0;line-height:.95">
-      <span style="color:var(--muted)">{'>'}</span>
-      <span style="color:var(--ink)"> about</span><span style="color:var(--muted)">.</span><span class="sans" style="font-style:italic;color:var(--accent)">md</span>
-      <span class="tm-cursor" style="color:var(--accent)"></span>
-    </h1>
-    <p class="sans" style="margin-top:32px;font-size:19px;color:var(--ink-soft);max-width:780px;line-height:1.55">
-      {lang === 'es'
-        ? <>Soy Héctor. Vivo en <span style="color:var(--accent)">Ilo</span> — un puerto al sur de Perú — y escribo software desde 2021. Llevo desde entonces buscando el equilibrio entre código limpio y problemas reales.</>
-        : <>I'm Héctor. I live in <span style="color:var(--accent)">Ilo</span> — a port in southern Peru — and I've been writing software since 2021. Since then I've been chasing the balance between clean code and real problems.</>
-      }
-    </p>
-  </section>
+<Layout title={t.nav.about} description={t.meta.about} lang={lang}>
+  <Scene lang={lang} variant="band" title={es ? ['Sobre mí'] : ['About me']} seed={13} />
 
-  <!-- MAIN 3-COL LAYOUT -->
-  <section style="padding:40px 56px 64px;display:grid;grid-template-columns:280px 1fr 320px;gap:40px;align-items:start" class="about-grid">
+  <section class="band band--cream story">
+    <div class="wrap story-grid">
+      <div class="prose">
+        <p class="lede first">
+          {es
+            ? 'Soy Héctor. Vivo en Ilo, un puerto al sur de Perú, y escribo software desde 2021 buscando el equilibrio entre código limpio y problemas reales.'
+            : "I'm Héctor. I live in Ilo, a port in southern Peru, and I've been writing software since 2021, chasing the balance between clean code and real problems."}
+        </p>
+        <h2 class="sub">{es ? 'De dónde vengo' : 'Where I come from'}</h2>
+        <p>
+          {es
+            ? 'Empecé escribiendo aplicaciones de escritorio en C# para mi propia universidad. Al graduarme, Agrosoft me dejó hacer algo más ambicioso: visualizar flotas enteras de maquinaria agrícola sobre un mapa en tiempo real, con telemetría, alertas y reportes para los dueños de las haciendas.'
+            : 'I started writing desktop applications in C# for my own university. When I graduated, Agrosoft let me do something more ambitious: show entire fleets of farm machinery on a real-time map, with telemetry, alerts and reports for the farm owners.'}
+        </p>
+        <p>
+          {es
+            ? 'Pasé tres años ahí. Aprendí a trabajar con bases de datos enormes sin perder la calma, a diseñar reportes que un agricultor entiende y a tratar el código como una herramienta, no como un fin.'
+            : 'I spent three years there. I learned to work with huge databases without losing my cool, to design reports a farmer understands, and to treat code as a tool, not an end in itself.'}
+        </p>
+        <h2 class="sub">{es ? 'Qué hago hoy' : 'What I do today'}</h2>
+        <p>
+          {es
+            ? 'Desde diciembre de 2025 superviso los sistemas y operaciones de Global Plus, una empresa de almacenaje de materiales peligrosos en Ilo. Mi día se divide entre las operaciones y el software que las hace posibles: un sistema de seguridad industrial con modo offline y una PWA para consultar los 2,661 materiales de la guía GRE 2024.'
+            : 'Since December 2025 I supervise systems and operations at Global Plus, a hazardous materials storage company in Ilo. My day splits between operations and the software that makes them possible: an industrial safety system with offline mode and a PWA to look up the 2,661 materials in the ERG 2024 guide.'}
+        </p>
+        <a href={cvPath(lang)} download class="pill pill--dark cv">
+          <Icon name="download" size={18} /> {t.common.cv}
+        </a>
+      </div>
 
-    <!-- LEFT — facts panel -->
-    <aside style="position:sticky;top:80px;display:flex;flex-direction:column;gap:18px">
-      <div class="tm-panel" style="padding:18px 20px">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:12px">$ stat profile.yml</div>
-        <dl style="margin:0;display:flex;flex-direction:column;gap:11px;font-size:13px">
+      <aside class="facts">
+        <dl>
           {facts.map(([k, v]) => (
-            <div style="display:flex;justify-content:space-between;gap:12px">
-              <dt style="color:var(--muted)">{k}</dt>
-              <dd class="sans" style="margin:0;color:var(--ink);text-align:right">{v}</dd>
-            </div>
+            <div><dt>{k}</dt><dd>{v}</dd></div>
           ))}
         </dl>
-      </div>
+      </aside>
+    </div>
+  </section>
 
-      <div class="tm-panel" style="padding:18px 20px">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">$ echo $QUOTE</div>
-        <p class="serif" style="font-size:17px;font-style:italic;color:var(--ink-soft);margin:0;line-height:1.4">
-          {quote}
-        </p>
-        <div style="font-size:11px;color:var(--muted);margin-top:8px">
-          {lang === 'es' ? '— me lo digo a mí mismo' : '— I tell myself this'}
-        </div>
-      </div>
-    </aside>
-
-    <!-- CENTER — long-form prose + principles -->
-    <article class="sans" style="font-size:16px;line-height:1.7;color:var(--ink-soft);max-width:720px">
-      <h2 class="tm-display" style="font-size:28px;color:var(--ink);margin:0 0 16px;letter-spacing:-.02em">
-        <span style="color:var(--accent)">$</span> cat /etc/origin
-      </h2>
-      <p style="margin-top:0">
-        {lang === 'es'
-          ? 'Empecé escribiendo aplicaciones de escritorio en C# para mi propia universidad. Cuando me gradué en 2021, Agrosoft me dejó hacer algo más ambicioso: visualizar flotas enteras de maquinaria agrícola — tractores, cosechadoras — sobre un mapa en tiempo real, con telemetría, alertas y reportes para los dueños de las haciendas.'
-          : 'I started writing desktop applications in C# for my own university. When I graduated in 2021, Agrosoft let me do something more ambitious: visualize entire fleets of agricultural machinery — tractors, harvesters — on a real-time map with telemetry, alerts and reports for farm owners.'
-        }
-      </p>
-      <p>
-        {lang === 'es'
-          ? 'Pasé tres años ahí. Aprendí a discutir con bases de datos enormes sin perder los nervios, a diseñar reportes que un agricultor entiende, y a tratar el código como una herramienta — no como un fin en sí mismo.'
-          : 'I spent three years there. I learned to deal with massive databases without losing my cool, to design reports that a farmer can understand, and to treat code as a tool — not an end in itself.'
-        }
-      </p>
-
-      <h2 class="tm-display" style="font-size:28px;color:var(--ink);margin:48px 0 16px;letter-spacing:-.02em">
-        <span style="color:var(--accent)">$</span> cat /etc/current
-      </h2>
-      <p>
-        {lang === 'es'
-          ? <></>
-          : <></>
-        }
-        {lang === 'es'
-          ? <>Desde marzo de 2025 superviso los sistemas de una empresa de almacenaje de <strong style="color:var(--ink);font-weight:600">materiales peligrosos</strong> en Ilo. Mi día se divide entre operaciones y construir el software que las hace posibles: un sistema de seguridad industrial en Next.js + Postgres con modo offline, y un panel multi-tenant que permite consultar <strong style="color:var(--accent);font-weight:600">2,661 materiales</strong> del estándar GRE 2024.</>
-          : <>Since March 2025 I supervise the systems of a <strong style="color:var(--ink);font-weight:600">hazardous materials</strong> storage company in Ilo. My day splits between operations and building the software that makes them possible: an industrial safety system in Next.js + Postgres with offline mode, and a multi-tenant panel to consult <strong style="color:var(--accent);font-weight:600">2,661 materials</strong> from the ERG 2024 standard.</>
-        }
-      </p>
-
-      <h2 class="tm-display" style="font-size:28px;color:var(--ink);margin:48px 0 24px;letter-spacing:-.02em">
-        <span style="color:var(--accent)">$</span> cat /etc/principles
-      </h2>
-      <ul style="padding-left:0;list-style:none;display:flex;flex-direction:column;gap:16px">
-        {principles.map(p => (
-          <li class="value-card" style="padding:18px 22px;border:1px solid var(--rule);border-radius:6px;background:var(--panel);transition:border-color .25s;display:grid;grid-template-columns:40px 1fr;gap:16px">
-            <span class="tm-display" style="font-size:14px;color:var(--accent)">{p.n}</span>
-            <div>
-              <div class="sans" style="font-size:17px;font-weight:500;color:var(--ink);margin-bottom:4px">{p.t}</div>
-              <div class="sans" style="font-size:14px;color:var(--ink-soft)">{p.d}</div>
-            </div>
+  <Ridge fill="var(--sand)" shape="hills" seed={17} />
+  <section class="band band--sand how">
+    <div class="wrap">
+      <h2 class="h2">{es ? 'Cómo trabajo' : 'How I work'}</h2>
+      <ul class="principles">
+        {principles.map((p, i) => (
+          <li data-reveal style={`--i:${i}`}>
+            <h3>{p.h}</h3>
+            <p>{p.p}</p>
           </li>
         ))}
       </ul>
-    </article>
 
-    <!-- RIGHT — skills + learning + timeline -->
-    <aside style="display:flex;flex-direction:column;gap:24px">
-      <!-- Skills as chips -->
-      <div class="tm-panel" style="padding:18px 20px">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:14px">$ ls --skills --primary</div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px">
-          {skills.map(s => (
-            <span class="tm-chip">{s.k}</span>
-          ))}
-        </div>
+      <div class="toolbox">
+        {toolbox.map(group => (
+          <div>
+            <h3>{group.h}</h3>
+            <ul>{group.items.map(item => <li class="chip">{item}</li>)}</ul>
+          </div>
+        ))}
       </div>
-
-      <!-- Learning -->
-      <div class="tm-panel" style="padding:18px 20px">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:12px">$ ls --learning</div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px">
-          {learning.map(item => (
-            <span class="tm-chip-dim">{item}</span>
-          ))}
-        </div>
-      </div>
-
-      <!-- Timeline -->
-      <div class="tm-panel" style="padding:18px 20px">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:14px">$ git log --years</div>
-        <div style="display:flex;flex-direction:column;gap:14px;position:relative">
-          <div style="position:absolute;left:5px;top:6px;bottom:6px;width:1px;background:var(--rule)"></div>
-          {timeline.map((m, i) => (
-            <div style="display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start;position:relative">
-              <span style={`width:11px;height:11px;border-radius:6px;background:${i === 0 ? 'var(--accent)' : 'var(--panel)'};border:1px solid ${i === 0 ? 'var(--accent)' : 'var(--muted)'};z-index:1;margin-top:4px;display:block`}></span>
-              <div>
-                <div style="font-size:11px;color:var(--muted);margin-bottom:2px">{m.y}</div>
-                <div class="sans" style="font-size:13px;color:var(--ink);font-weight:500">{m.t}</div>
-                <div class="sans" style="font-size:12px;color:var(--ink-soft)">{m.d}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </aside>
+    </div>
   </section>
 
-  <!-- CTA STRIP -->
-  <section style="padding:48px 56px 96px;border-top:1px solid var(--rule);background:var(--bg-dark);position:relative;overflow:hidden" class="cta-strip">
-    <div style="position:absolute;inset:0;background:radial-gradient(circle at 80% 50%,#a6f55b11,transparent 50%);pointer-events:none"></div>
-    <div style="position:relative;display:flex;justify-content:space-between;align-items:center;gap:32px;flex-wrap:wrap">
-      <div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:10px">$ ./hire-me.sh</div>
-        <h2 class="tm-display" style="font-size:44px;margin:0;color:var(--ink);line-height:1.1">
-          {lang === 'es'
-            ? <>{`¿Buscas a alguien que `}<span style="color:var(--accent)">termine</span>{` las cosas?`}</>
-            : <>{`Looking for someone who `}<span style="color:var(--accent)">ships</span>{`?`}</>
-          }
-        </h2>
-      </div>
-      <a href={`/${lang}/contact`}
-        style="padding:14px 24px;background:var(--accent);color:var(--bg);border-radius:4px;font-size:13px;font-weight:600;border:0;cursor:pointer;font-family:inherit;text-decoration:none">
-        {lang === 'es' ? 'Escríbeme →' : 'Write me →'}
-      </a>
+  <Ridge fill="var(--rust)" shape="peaks" flip />
+  <section class="band band--rust on-dark path">
+    <div class="wrap">
+      <blockquote class="quote">
+        <p>{quote}</p>
+        <footer>{es ? 'Algo que me repito' : 'Something I tell myself'}</footer>
+      </blockquote>
+
+      <h2 class="h2">{es ? 'Trayectoria' : 'Experience'}</h2>
+      <Timeline lang={lang} detailed />
     </div>
   </section>
 </Layout>
 
 <style>
-  .value-card:hover { border-color: #a6f55b66 !important; }
-
-  @media (max-width: 1024px) {
-    .about-grid { grid-template-columns: 1fr !important; }
-    aside[style*="position:sticky"] { position: static !important; }
+  .story { padding: clamp(64px, 9vw, 120px) 0 clamp(96px, 12vw, 160px); }
+  .story-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(260px, 1fr);
+    gap: clamp(40px, 7vw, 112px);
+    align-items: start;
   }
-  @media (max-width: 768px) {
-    .about-hero, .about-grid, .cta-strip { padding-left: 24px !important; padding-right: 24px !important; }
-    .about-hero { padding-top: 40px !important; }
+  .first { max-width: none; margin-bottom: 1.6em; color: var(--ink); }
+  .sub {
+    margin: 2.2em 0 0.6em;
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: 1.35rem;
+    line-height: 1.1;
+  }
+  .prose p:not(.first) { color: var(--ink-soft); }
+  .cv { margin-top: 1.4em; }
+
+  .facts { position: sticky; top: 32px; }
+  .facts dl { margin: 0; border-top: 2px solid var(--night); }
+  .facts dl div { padding: 14px 0; border-bottom: 1px solid var(--rule); }
+  .facts dt { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.03em; color: var(--ink-soft); }
+  .facts dd { margin: 2px 0 0; font-weight: 500; }
+
+  .how { padding: clamp(48px, 6vw, 80px) 0 clamp(110px, 13vw, 180px); }
+  .principles {
+    list-style: none;
+    margin: clamp(32px, 4vw, 56px) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 44px 56px;
+  }
+  .principles li { padding-top: 18px; border-top: 2px solid var(--night); }
+  .principles h3, .toolbox h3 {
+    margin: 0 0 10px;
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: 1.3rem;
+    line-height: 1.05;
+  }
+  .principles p { margin: 0; color: var(--ink-soft); max-width: 46ch; }
+
+  .toolbox {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 32px;
+    margin-top: clamp(56px, 7vw, 96px);
+  }
+  .toolbox ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .toolbox .chip { border-color: rgba(44, 15, 30, 0.3); }
+
+  .path { padding: clamp(48px, 6vw, 80px) 0 clamp(110px, 13vw, 180px); }
+  .quote { margin: 0 0 clamp(64px, 8vw, 112px); max-width: 26ch; }
+  .quote p {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.8rem, 3.6vw, 3rem);
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+  .quote footer { margin-top: 16px; color: var(--ink-on-dark-soft); font-weight: 600; }
+  .path .h2 { margin-bottom: clamp(24px, 3vw, 40px); }
+
+
+  @media (max-width: 900px) {
+    .story-grid { grid-template-columns: 1fr; }
+    .facts { position: static; }
+    .toolbox { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .principles { grid-template-columns: 1fr; gap: 28px; }
   }
 </style>

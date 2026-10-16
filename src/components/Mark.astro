@@ -1,0 +1,15 @@
+---
+// Personal mark: a peak with the sun setting behind it.
+interface Props {
+  size?: number;
+  tone?: 'dark' | 'light';
+}
+const { size = 32, tone = 'dark' } = Astro.props;
+const ink = tone === 'dark' ? 'var(--night)' : 'var(--ink-on-dark)';
+---
+
+<svg width={size} height={size} viewBox="0 0 40 40" aria-hidden="true">
+  <circle cx="25" cy="17" r="7.5" fill="var(--accent)" />
+  <path d="M3 33 15.5 10.5 22 21.5 26 15.5 37 33Z" fill={ink} />
+  <path d="M15.5 10.5 11.6 17.4 14.4 16.4 15.8 19 17.6 15.6 19.4 17.6Z" fill="var(--sand)" />
+</svg>

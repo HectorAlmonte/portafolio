@@ -1,0 +1,83 @@
+---
+import Icon from './Icon.astro';
+import { type Lang } from '../i18n/translations';
+import { type ProjectDetail } from '../data/projects';
+
+interface Props {
+  lang: Lang;
+  items: ProjectDetail[];
+}
+
+const { lang, items } = Astro.props;
+---
+
+<ol class="rows">
+  {items.map((p, i) => (
+    <li data-reveal style={`--i:${i}`} data-cat={p.cat} data-featured={p.featured ? 'true' : 'false'}>
+      <a href={`/${lang}/projects/${p.slug}`} class="row">
+        <span class="meta year">{p.year}</span>
+        <span class="row-main">
+          <span class="row-title">{p.title}</span>
+          <span class="meta kind">{p.kind[lang]}</span>
+        </span>
+        <span class="row-text">
+          {p.tagline[lang]}
+          <span class="row-stack">{p.stack.slice(0, 4).join(' · ')}</span>
+        </span>
+        <span class="row-go" aria-hidden="true"><Icon name="diag" size={20} /></span>
+      </a>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .rows { list-style: none; margin: 0; padding: 0; border-bottom: 1.5px solid var(--night); }
+  .rows li[hidden] { display: none; }
+  .row {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1.1fr) minmax(0, 1.3fr) 48px;
+    gap: 24px;
+    align-items: center;
+    padding: 28px 0;
+    border-top: 1.5px solid var(--night);
+    text-decoration: none;
+  }
+  .row-main { display: flex; flex-direction: column; gap: 6px; }
+  .row-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: clamp(1.6rem, 3vw, 2.5rem);
+    line-height: 1;
+    overflow-wrap: anywhere;
+    transition: transform 300ms var(--ease-out);
+  }
+  .kind { color: var(--ink-soft); }
+  .row-text { color: var(--ink-soft); font-size: 1rem; }
+  .row-stack { display: block; margin-top: 8px; font-size: 0.85rem; font-weight: 600; color: var(--ink); }
+  .row-go {
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    border: 1.5px solid var(--night);
+    transition: background-color 200ms ease, color 200ms ease, transform 300ms var(--ease-out);
+  }
+  .row:active .row-go { transform: scale(0.94); }
+  @media (hover: hover) and (pointer: fine) {
+    .row:hover .row-title { transform: translateX(8px); }
+    .row:hover .row-go { background: var(--night); color: var(--cream); }
+  }
+
+  @media (max-width: 900px) {
+    .row { grid-template-columns: 1fr 48px; gap: 10px 16px; }
+    .year { grid-column: 1 / -1; }
+    .row-main { grid-column: 1; }
+    .row-text { grid-column: 1 / -1; }
+    .row-go { grid-column: 2; grid-row: 2; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .row-title, .row-go { transition: none; }
+  }
+</style>

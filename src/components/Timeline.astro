@@ -1,0 +1,59 @@
+---
+import { type Lang } from '../i18n/translations';
+import { experience } from '../data/experience';
+
+interface Props {
+  lang: Lang;
+  /** show the duration next to the work mode */
+  detailed?: boolean;
+}
+
+const { lang, detailed = false } = Astro.props;
+---
+
+<ol class="timeline">
+  {experience[lang].items.map((e, i) => (
+    <li data-reveal style={`--i:${i}`}>
+      <div class="when">
+        <span class="meta">{e.period}</span>
+        <span class="mode">{detailed ? `${e.duration} · ${e.mode}` : e.mode}</span>
+      </div>
+      <div class="what">
+        <h3>{e.role}</h3>
+        <p class="org">{e.org}</p>
+        <ul class="bullets">{e.bullets.map(b => <li>{b}</li>)}</ul>
+        <ul class="tags">{e.tags.map(tag => <li class="chip">{tag}</li>)}</ul>
+      </div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .timeline { list-style: none; margin: 0; padding: 0; }
+  .timeline > li {
+    display: grid;
+    grid-template-columns: minmax(160px, 0.32fr) 1fr;
+    gap: 24px 48px;
+    padding: 36px 0;
+    border-top: 1px solid var(--rule-on-dark);
+  }
+  .when { display: flex; flex-direction: column; gap: 6px; }
+  .when .meta { font-size: 0.95rem; }
+  .mode { color: var(--ink-on-dark-soft); font-size: 0.92rem; }
+  .what h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+    line-height: 1.05;
+  }
+  .org { margin: 6px 0 16px; font-weight: 600; color: var(--sun); }
+  .bullets { margin: 0 0 18px; padding-left: 1.1em; color: var(--ink-on-dark-soft); max-width: var(--measure); }
+  .bullets li + li { margin-top: 6px; }
+  .bullets li::marker { color: var(--sand); }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0; padding: 0; }
+
+  @media (max-width: 900px) {
+    .timeline > li { grid-template-columns: 1fr; gap: 12px; }
+  }
+</style>

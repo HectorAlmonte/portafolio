@@ -1,268 +1,206 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
+import Scene from '../../../components/Scene.astro';
+import Ridge from '../../../components/Ridge.astro';
+import Icon from '../../../components/Icon.astro';
 import { languages, type Lang } from '../../../i18n/translations';
 import { projects } from '../../../data/projects';
 
 export function getStaticPaths() {
   return languages.flatMap(lang =>
-    projects.map(p => ({
+    projects.map((p, i) => ({
       params: { lang, slug: p.slug },
-      props: { project: p },
+      props: { project: p, index: i },
     }))
   );
 }
 
 const { lang } = Astro.params as { lang: Lang };
-const { project } = Astro.props;
+const { project, index } = Astro.props;
+const es = lang === 'es';
 
-function t<T>(obj: { es: T; en: T }): T {
-  return obj[lang as 'es' | 'en'];
-}
+const prev = projects[index - 1] ?? null;
+const next = projects[index + 1] ?? null;
 
-const idx      = projects.findIndex(p => p.slug === project.slug);
-const prevProj = idx > 0 ? projects[idx - 1] : null;
-const nextProj = idx < projects.length - 1 ? projects[idx + 1] : null;
-
-const stackCategories: Record<string, string> = {
-  'TypeScript': 'lang', 'JavaScript': 'lang', 'Rust': 'lang', 'C#': 'lang',
-  'React': 'frontend', 'Next.js': 'frontend', 'Next.js 14': 'frontend',
-  'Next.js 16': 'frontend', 'Astro 5': 'frontend', 'TailwindCSS': 'frontend',
-  'Node.js': 'backend', '.NET C#': 'backend', 'ASP.NET': 'backend',
-  'PostgreSQL': 'data', 'SQL Server': 'data', 'SQLite': 'data', 'Prisma': 'data',
-  'Drizzle ORM': 'data', 'Mapbox': 'infra', 'Docker': 'infra', 'PWA': 'infra',
-  'Tesseract.js': 'lib', 'EmailJS': 'lib', 'NextAuth': 'lib', 'Workbox': 'lib',
-};
-const categoryLabel: Record<string, { es: string; en: string }> = {
-  lang:     { es: 'lenguaje', en: 'language' },
-  frontend: { es: 'frontend', en: 'frontend' },
-  backend:  { es: 'backend',  en: 'backend' },
-  data:     { es: 'datos',    en: 'data' },
-  infra:    { es: 'infra',    en: 'infra' },
-  lib:      { es: 'librería', en: 'library' },
-  other:    { es: 'otro',     en: 'other' },
-};
-const stackGrouped = project.stack.reduce((acc, tech) => {
-  const cat = stackCategories[tech] ?? 'other';
-  if (!acc[cat]) acc[cat] = [];
-  acc[cat].push(tech);
-  return acc;
-}, {} as Record<string, string[]>);
+// break long slugs on the hyphen so the title fits the scene
+const titleLines = project.title.length > 12 ? project.title.split(/(?<=-)/) : [project.title];
 ---
 
-<Layout title={project.title} description={t(project.tagline)} lang={lang}>
-
-  <!-- HEADER -->
-  <section style="padding:64px 56px 32px" class="pd-header">
-    <div style="font-size:11px;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <a href={`/${lang}/projects`}
-        style="color:var(--muted);text-decoration:none;transition:color .15s"
-        onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">
-        ← {lang === 'es' ? 'proyectos' : 'projects'}
-      </a>
-      <span style="opacity:.4">/</span>
-      <span style="color:var(--accent)">{t(project.kind)}</span>
-      <span style="opacity:.4">·</span>
-      <span>{project.year}</span>
-      <span style="flex:1"></span>
-      <span style="display:flex;align-items:center;gap:6px">
-        <span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block"></span>
-        <span class="sans">{t(project.status)}</span>
-      </span>
+<Layout title={project.title} description={project.tagline[lang]} lang={lang}>
+  <Scene lang={lang} variant="band" title={titleLines} seed={31 + index}>
+    <div class="band-foot on-dark">
+      <span class="meta">{project.year}</span>
+      <span class="meta">{project.kind[lang]}</span>
+      <span class="meta status">{project.status[lang]}</span>
     </div>
+  </Scene>
 
-    <h1 class="tm-display" style="font-size:clamp(48px,7vw,88px);margin:0;line-height:.95">
-      <span style="color:var(--muted)">{'>'}</span>
-      <span style="color:var(--ink)"> {project.title}</span>
-      <span class="tm-cursor" style="color:var(--accent)"></span>
-    </h1>
+  <section class="band band--cream body">
+    <div class="wrap">
+      <a href={`/${lang}/projects`} class="back link"><Icon name="back" size={16} /> {es ? 'Todos los proyectos' : 'All projects'}</a>
 
-    <p class="sans" style="margin-top:24px;font-size:18px;color:var(--ink-soft);max-width:760px;line-height:1.55">
-      {t(project.tagline)}
-    </p>
+      <p class="lede tagline">{project.tagline[lang]}</p>
 
-    <div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap">
-      {project.stack.map(tech => <span class="tm-chip">{tech}</span>)}
+      <div class="cols">
+        <div>
+          <h2 class="sub">{es ? 'El problema' : 'The problem'}</h2>
+          <p>{project.problem[lang]}</p>
+        </div>
+        <div>
+          <h2 class="sub">{es ? 'La solución' : 'The solution'}</h2>
+          <p>{project.solution[lang]}</p>
+        </div>
+      </div>
+
+      <div class="links">
+        <a href={project.github} target="_blank" rel="noopener" class="pill pill--dark">
+          <Icon name="github" size={18} /> GitHub
+        </a>
+        {project.demo && (
+          <a href={project.demo} target="_blank" rel="noopener" class="pill pill--ghost">
+            Demo <Icon name="diag" size={16} />
+          </a>
+        )}
+      </div>
     </div>
   </section>
 
-  <!-- MOCKUP + IMPACT GRID -->
-  <section style="padding:0 56px 40px;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch" class="pd-mockup">
-    <!-- Terminal mockup -->
-    <div class="tm-panel" style="padding:0;overflow:hidden">
-      <div style="display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--rule);background:var(--bg-dark)">
-        <span style="display:flex;gap:4px">
-          <span style="width:9px;height:9px;border-radius:5px;background:#ff5f57;display:block"></span>
-          <span style="width:9px;height:9px;border-radius:5px;background:#febc2e;display:block"></span>
-          <span style="width:9px;height:9px;border-radius:5px;background:#28c840;display:block"></span>
-        </span>
-        <span style="margin-left:8px;font-size:11px;color:var(--muted)">bash — {project.slug}</span>
-      </div>
-      <pre style="margin:0;padding:18px 20px;font-size:12.5px;line-height:1.7;color:var(--ink-soft);overflow-x:auto;white-space:pre">{project.mockup.join('\n')}</pre>
-    </div>
-
-    <!-- Impact highlights -->
-    <div style="display:flex;flex-direction:column;gap:16px">
-      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">
-        <span style="color:var(--accent)">$</span> cat impact.md
-      </div>
-      {t(project.impact).map((metric, i) => (
-        <div class="tm-panel impact-card" style={`padding:20px 22px;flex:1;display:flex;flex-direction:column;justify-content:center;border-left:2px solid var(--accent);border-radius:0 6px 6px 0`}>
-          <div style="display:flex;gap:10px;align-items:flex-start">
-            <span style="color:var(--accent);font-size:18px;font-weight:600;flex-shrink:0;margin-top:-1px">{String(i + 1).padStart(2, '0')}</span>
-            <span class="sans" style="font-size:14px;color:var(--ink-soft);line-height:1.5">{metric}</span>
-          </div>
-        </div>
-      ))}
-    </div>
-  </section>
-
-  <!-- MAIN 2-COL -->
-  <section style="padding:48px 56px 96px;display:grid;grid-template-columns:1fr 300px;gap:56px;align-items:start" class="pd-body">
-
-    <!-- LEFT: narrative -->
-    <article class="sans" style="font-size:16px;line-height:1.75;color:var(--ink-soft)">
-
-      <div data-scroll="" style="margin-bottom:52px">
-        <h2 class="tm-display" style="font-size:24px;color:var(--ink);margin:0 0 16px;letter-spacing:-.02em">
-          <span style="color:var(--accent)">$</span> cat problem.md
-        </h2>
-        <p style="margin:0">{t(project.problem)}</p>
-      </div>
-
-      <div data-scroll="" style="margin-bottom:52px">
-        <h2 class="tm-display" style="font-size:24px;color:var(--ink);margin:0 0 16px;letter-spacing:-.02em">
-          <span style="color:var(--accent)">$</span> cat solution.md
-        </h2>
-        <p style="margin:0">{t(project.solution)}</p>
-      </div>
-
-      <div data-scroll="">
-        <h2 class="tm-display" style="font-size:24px;color:var(--ink);margin:0 0 16px;letter-spacing:-.02em">
-          <span style="color:var(--accent)">$</span> cat stack-decisions.md
-        </h2>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          {project.stackNotes.map(n => (
-            <div class="tm-panel" style="padding:14px 18px;display:grid;grid-template-columns:160px 1fr;gap:16px;align-items:start">
-              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);font-weight:500;line-height:1.6">{n.tech}</span>
-              <span style="font-size:14px;color:var(--ink-soft);line-height:1.55">{t(n.reason)}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </article>
-
-    <!-- RIGHT: impact + links -->
-    <aside style="display:flex;flex-direction:column;gap:16px;position:sticky;top:80px">
-
-      <div class="tm-panel" style="padding:20px" data-scroll="">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:14px">$ cat impact.md</div>
-        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px">
-          {t(project.impact).map(metric => (
-            <li style="display:flex;gap:10px;align-items:flex-start">
-              <span style="color:var(--accent);margin-top:2px;flex-shrink:0;font-size:12px">▸</span>
-              <span class="sans" style="font-size:13px;color:var(--ink-soft);line-height:1.5">{metric}</span>
-            </li>
+  <Ridge fill="var(--sand)" shape="hills" seed={41 + index} />
+  <section class="band band--sand results">
+    <div class="wrap results-grid">
+      <div>
+        <h2 class="h2">{es ? 'Impacto' : 'Impact'}</h2>
+        <ul class="impact">
+          {project.impact[lang].map((item, i) => (
+            <li data-reveal style={`--i:${i}`}>{item}</li>
           ))}
         </ul>
       </div>
 
-      <div class="tm-panel" style="padding:20px" data-scroll="">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:12px">$ git status</div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="width:7px;height:7px;border-radius:50%;background:var(--accent);display:block;flex-shrink:0"></span>
-          <span class="sans" style="font-size:13px;color:var(--ink)">{t(project.status)}</span>
-        </div>
-      </div>
+      <figure class="screen">
+        <div class="screen-bar" aria-hidden="true"><span></span><span></span><span></span></div>
+        <pre class="mono" aria-label={es ? 'Vista previa en texto' : 'Text preview'}>{project.mockup.join('\n')}</pre>
+      </figure>
+    </div>
+  </section>
 
-      <div class="tm-panel" style="padding:20px" data-scroll="">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:12px">$ ls --links</div>
-        <div style="display:flex;flex-direction:column">
-          <a href={project.github} target="_blank" rel="noreferrer"
-            class="link-row"
-            style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--rule);text-decoration:none;color:var(--ink-soft);transition:color .15s">
-            <span class="sans" style="font-size:13px">GitHub</span>
-            <span style="color:var(--muted);transition:color .15s,transform .2s">↗</span>
+  <section class="band band--sand stack">
+    <div class="wrap">
+      <h2 class="h2">Stack</h2>
+      <dl class="notes">
+        {project.stackNotes.map(n => (
+          <div>
+            <dt>{n.tech}</dt>
+            <dd>{n.reason[lang]}</dd>
+          </div>
+        ))}
+      </dl>
+      <ul class="chips">{project.stack.map(s => <li class="chip">{s}</li>)}</ul>
+
+      <nav class="pager" aria-label={es ? 'Otros proyectos' : 'Other projects'}>
+        {prev ? (
+          <a href={`/${lang}/projects/${prev.slug}`} class="pager-link">
+            <span class="meta"><Icon name="back" size={14} /> {es ? 'Anterior' : 'Previous'}</span>
+            <span class="pager-title">{prev.title}</span>
           </a>
-          {project.demo && (
-            <a href={project.demo} target="_blank" rel="noreferrer"
-              class="link-row"
-              style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--rule);text-decoration:none;color:var(--ink-soft);transition:color .15s">
-              <span class="sans" style="font-size:13px">{lang === 'es' ? 'Demo en vivo' : 'Live demo'}</span>
-              <span style="color:var(--muted);transition:color .15s,transform .2s">↗</span>
-            </a>
-          )}
-          <div style="border-top:1px solid var(--rule)"></div>
-        </div>
-      </div>
-
-      <!-- Stack breakdown by category -->
-      <div class="tm-panel" style="padding:20px" data-scroll="">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:14px">$ cat stack.yml</div>
-        <dl style="margin:0;display:flex;flex-direction:column;gap:10px;font-size:12px">
-          {Object.entries(stackGrouped).map(([cat, techs]) => (
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
-              <dt style="color:var(--muted);white-space:nowrap;padding-top:1px">{t(categoryLabel[cat] ?? categoryLabel.other)}</dt>
-              <dd style="margin:0;text-align:right;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px">
-                {techs.map(tech => <span class="tm-chip" style="font-size:10px;padding:2px 7px">{tech}</span>)}
-              </dd>
-            </div>
-          ))}
-        </dl>
-      </div>
-
-      <!-- Project navigation -->
-      <div class="tm-panel" style="padding:20px" data-scroll="">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:14px">$ ls ../</div>
-        <div style="display:flex;flex-direction:column;gap:0">
-          {prevProj && (
-            <a href={`/${lang}/projects/${prevProj.slug}`}
-              class="nav-proj-row"
-              style="display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--rule);text-decoration:none;color:var(--ink-soft);transition:color .15s;font-size:13px">
-              <span style="color:var(--muted);flex-shrink:0">←</span>
-              <div style="min-width:0">
-                <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{prevProj.title}</div>
-                <div class="sans" style="font-size:11px;color:var(--muted);margin-top:1px">{t(prevProj.kind)}</div>
-              </div>
-            </a>
-          )}
-          {nextProj && (
-            <a href={`/${lang}/projects/${nextProj.slug}`}
-              class="nav-proj-row"
-              style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--rule);text-decoration:none;color:var(--ink-soft);transition:color .15s;font-size:13px">
-              <div style="min-width:0">
-                <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{nextProj.title}</div>
-                <div class="sans" style="font-size:11px;color:var(--muted);margin-top:1px">{t(nextProj.kind)}</div>
-              </div>
-              <span style="color:var(--muted);flex-shrink:0">→</span>
-            </a>
-          )}
-          <div style="border-top:1px solid var(--rule)"></div>
-        </div>
-      </div>
-
-      <a href={`/${lang}/projects`}
-        style="display:block;text-align:center;padding:11px;border:1px solid var(--rule);border-radius:4px;color:var(--muted);text-decoration:none;font-size:12px;transition:border-color .2s,color .2s"
-        onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'"
-        onmouseout="this.style.borderColor='var(--rule)';this.style.color='var(--muted)'">
-        ← {lang === 'es' ? 'todos los proyectos' : 'all projects'}
-      </a>
-    </aside>
+        ) : <span />}
+        {next && (
+          <a href={`/${lang}/projects/${next.slug}`} class="pager-link right">
+            <span class="meta">{es ? 'Siguiente' : 'Next'} <Icon name="arrow" size={14} /></span>
+            <span class="pager-title">{next.title}</span>
+          </a>
+        )}
+      </nav>
+    </div>
   </section>
 </Layout>
 
 <style>
-  .link-row:hover { color: var(--accent) !important; }
-  .link-row:hover span:last-child { color: var(--accent) !important; transform: translateX(3px); }
-  .link-row:first-child { border-top: 0 !important; }
-  .nav-proj-row:hover { color: var(--accent) !important; }
-  .nav-proj-row:first-child { border-top: 0 !important; }
+  .band-foot {
+    margin-top: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    padding: 0 clamp(16px, 3vw, 40px) clamp(18px, 3vw, 32px);
+    color: var(--ink-on-dark-soft);
+  }
+  .band-foot .status { color: var(--sun); }
 
-  pre { max-width: 100%; overflow-x: auto; }
+  .body { padding: clamp(40px, 5vw, 64px) 0 clamp(96px, 12vw, 160px); }
+  .back { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+  .tagline { max-width: 30ch; margin: 32px 0 clamp(40px, 5vw, 72px); font-size: clamp(1.4rem, 2.6vw, 2rem); line-height: 1.25; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 5vw, 72px); }
+  .cols p { margin: 0; color: var(--ink-soft); max-width: 56ch; }
+  .sub {
+    margin: 0 0 12px;
+    padding-top: 16px;
+    border-top: 2px solid var(--night);
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: 1.3rem;
+  }
+  .links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 40px; }
 
-  @media (max-width: 900px) {
-    .pd-header { padding-top: 40px !important; }
-    .pd-mockup { grid-template-columns: 1fr !important; }
-    .pd-body   { grid-template-columns: 1fr !important; }
-    aside[style*="position:sticky"] { position: static !important; }
+  .results { padding: clamp(48px, 6vw, 80px) 0 32px; }
+  .results-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(40px, 6vw, 88px); align-items: start; }
+  .impact { list-style: none; margin: 28px 0 0; padding: 0; }
+  .impact li {
+    padding: 18px 0;
+    border-top: 1.5px solid var(--night);
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-wrap: pretty;
+  }
+
+  .screen {
+    margin: 0;
+    border-radius: 20px;
+    background: var(--night);
+    color: var(--ink-on-dark-soft);
+    overflow: hidden;
+    box-shadow: 0 24px 48px -16px rgba(44, 15, 30, 0.45);
+  }
+  .screen-bar { display: flex; gap: 6px; padding: 14px 18px; border-bottom: 1px solid var(--rule-on-dark); }
+  .screen-bar span { width: 9px; height: 9px; border-radius: 50%; background: var(--rule-on-dark); }
+  .screen pre {
+    margin: 0;
+    padding: 22px 24px 26px;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    overflow-x: auto;
+  }
+
+  .stack { padding: clamp(56px, 7vw, 96px) 0 clamp(110px, 13vw, 180px); }
+  .notes { margin: 28px 0 24px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 56px; }
+  .notes div { padding: 18px 0; border-top: 1.5px solid var(--night); }
+  .notes dt { font-weight: 700; }
+  .notes dd { margin: 4px 0 0; color: var(--ink-soft); }
+  .chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips .chip { border-color: rgba(44, 15, 30, 0.3); }
+
+  .pager {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: clamp(64px, 8vw, 104px);
+  }
+  .pager-link { display: flex; flex-direction: column; gap: 6px; text-decoration: none; }
+  .pager-link.right { text-align: right; align-items: flex-end; }
+  .pager-link .meta { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-soft); }
+  .pager-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: clamp(1.3rem, 2.6vw, 2rem);
+    line-height: 1;
+    transition: transform 300ms var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .pager-link:hover .pager-title { transform: translateX(-6px); }
+    .pager-link.right:hover .pager-title { transform: translateX(6px); }
+  }
+
+  @media (max-width: 860px) {
+    .cols, .results-grid, .notes { grid-template-columns: 1fr; }
   }
 </style>

@@ -1,43 +1,117 @@
 ---
+import Icon from './Icon.astro';
+import Mark from './Mark.astro';
+import Ridge from './Ridge.astro';
 import { type Lang } from '../i18n/translations';
+import { useTranslations, navLinks, cvPath, EMAIL, GITHUB, LINKEDIN } from '../i18n/utils';
 
 interface Props {
   lang: Lang;
+  /** hide the call to action on the contact page itself */
+  cta?: boolean;
 }
 
-const { lang } = Astro.props;
+const { lang, cta = true } = Astro.props;
+const t = useTranslations(lang);
+
+// a fixed scatter of stars
+let s = 42;
+const rand = () => ((s = (s * 16807) % 2147483647) / 2147483647);
+const stars = Array.from({ length: 70 }, () => ({
+  x: Math.round(rand() * 1440),
+  y: Math.round(rand() * 420),
+  r: rand() < 0.15 ? 1.8 : 1,
+  o: (0.35 + rand() * 0.55).toFixed(2),
+}));
 ---
 
-<footer class="site-footer" style="border-top:1px solid var(--rule);background:var(--bg-dark)">
-  <div class="footer-inner" style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);gap:16px;flex-wrap:wrap">
-    <div>
-      <span style="color:var(--accent)">➜ ~ </span>
-      echo "{lang === 'es' ? 'Hecho con cuidado — Astro + Tailwind · v2026.1' : 'Made with care — Astro + Tailwind · v2026.1'}"
+<Ridge fill="var(--night)" shape="trees" seed={29} />
+<footer class="band band--night on-dark footer">
+  <svg class="sky" viewBox="0 0 1440 420" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+    {stars.map(st => <circle cx={st.x} cy={st.y} r={st.r} fill="#fff4e6" opacity={st.o} />)}
+    <circle cx="1180" cy="110" r="38" fill="#fde6b8" />
+    <circle cx="1196" cy="100" r="34" fill="var(--night)" />
+  </svg>
+
+  <div class="wrap inner">
+    {cta && (
+      <div class="cta">
+        <h2 class="h2">
+          {t.footer.title.map(l => <span class="line">{l}</span>)}
+        </h2>
+        <p class="lede">{t.footer.text}</p>
+        <div class="actions">
+          <a href={`/${lang}/contact`} class="pill pill--light">
+            {t.footer.write} <Icon name="arrow" size={18} />
+          </a>
+          <a href={`mailto:${EMAIL}`} class="pill pill--ghost">
+            <Icon name="mail" size={18} /> {EMAIL}
+          </a>
+        </div>
+      </div>
+    )}
+
+    <div class="base">
+      <a href={`/${lang}/`} class="brand" aria-label="Hector Almonte">
+        <Mark size={30} tone="light" />
+      </a>
+      <nav class="foot-links" aria-label="Footer">
+        {navLinks(lang).map(l => <a href={l.href} class="link">{l.label}</a>)}
+        <a href={cvPath(lang)} download class="link">{t.common.cv}</a>
+      </nav>
+      <div class="social">
+        <a href={GITHUB} target="_blank" rel="noopener" aria-label="GitHub"><Icon name="github" size={22} /></a>
+        <a href={LINKEDIN} target="_blank" rel="noopener" aria-label="LinkedIn"><Icon name="linkedin" size={22} /></a>
+        <a href={`mailto:${EMAIL}`} aria-label="Email"><Icon name="mail" size={22} /></a>
+      </div>
     </div>
-    <div style="display:flex;gap:18px">
-      <a href="https://github.com/HectorAlmonte" target="_blank" rel="noopener"
-        style="color:var(--accent);text-decoration:none">github↗</a>
-      <a href="https://www.linkedin.com/in/hector-almonte-788a4a212/" target="_blank" rel="noopener"
-        style="color:var(--accent);text-decoration:none">linkedin↗</a>
-      <a href="mailto:hectoralmoten@gmail.com"
-        style="color:var(--accent);text-decoration:none">hectoralmoten@gmail.com</a>
-    </div>
+    <p class="small">© {new Date().getFullYear()} Hector Almonte · {t.footer.made}</p>
   </div>
 </footer>
 
 <style>
-  .site-footer {
-    padding: 24px clamp(20px, 5vw, 56px);
+  .footer { position: relative; overflow: hidden; }
+  .sky {
+    position: absolute;
+    inset: 0 0 auto 0;
+    width: 100%;
+    height: 420px;
+    pointer-events: none;
   }
-  @media (max-width: 480px) {
-    .footer-inner {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 12px;
-    }
-    .footer-inner > div:last-child {
-      flex-wrap: wrap;
-      gap: 12px;
-    }
+  .inner { position: relative; padding-top: clamp(48px, 7vw, 96px); padding-bottom: 32px; }
+
+  .cta { max-width: 860px; padding-bottom: clamp(64px, 9vw, 120px); }
+  .line { display: block; }
+  .cta .h2 { color: var(--ink-on-dark); }
+  .cta .lede { margin: 24px 0 32px; color: var(--ink-on-dark-soft); }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+  .base {
+    display: flex;
+    align-items: center;
+    gap: 24px 32px;
+    flex-wrap: wrap;
+    padding-top: 28px;
+    border-top: 1px solid var(--rule-on-dark);
+  }
+  .foot-links { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-right: auto; font-weight: 600; }
+  .social { display: flex; gap: 4px; }
+  .social a {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    color: var(--ink-on-dark-soft);
+    transition: color 200ms ease, background-color 200ms ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .social a:hover { color: var(--ink-on-dark); background: var(--rule-on-dark); }
+  }
+  .small { margin: 24px 0 0; font-size: 0.85rem; color: var(--ink-on-dark-soft); }
+
+  @media (max-width: 560px) {
+    .actions .pill--ghost { font-size: 0.9rem; }
+    .base { align-items: flex-start; flex-direction: column; }
   }
 </style>

@@ -1,208 +1,150 @@
 ---
+import Icon from './Icon.astro';
+import Mark from './Mark.astro';
 import { type Lang } from '../i18n/translations';
-import { getAlternateLang, getLocalizedPath } from '../i18n/utils';
+import {
+  useTranslations, getAlternateLang, getLocalizedPath, navLinks, currentSection, cvPath,
+} from '../i18n/utils';
 
 interface Props {
   lang: Lang;
 }
 
 const { lang } = Astro.props;
-const alternateLang  = getAlternateLang(lang);
-const currentPath    = Astro.url.pathname;
-const alternatePath  = getLocalizedPath(currentPath, alternateLang);
-
-const links = [
-  { id: '',         href: `/${lang}/`,         label: '~' },
-  { id: 'about',    href: `/${lang}/about`,     label: lang === 'es' ? 'sobre mí'  : 'about'    },
-  { id: 'projects', href: `/${lang}/projects`,  label: lang === 'es' ? 'proyectos' : 'projects'  },
-  { id: 'contact',  href: `/${lang}/contact`,   label: lang === 'es' ? 'contacto'  : 'contact'   },
-];
-
-const pathSegments = currentPath.split('/').filter(Boolean);
-const currentPage  = pathSegments[1] ?? '';
+const t = useTranslations(lang);
+const alt = getAlternateLang(lang);
+const altPath = getLocalizedPath(Astro.url.pathname, alt);
+const here = currentSection(Astro.url.pathname);
+const links = navLinks(lang).filter(l => l.id !== '');
 ---
 
-<header
-  id="tm-topbar"
-  style="
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 14px 28px;
-    border-bottom: 1px solid var(--rule);
-    background: var(--bg-dark);
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    backdrop-filter: blur(8px);
-  "
->
-  <!-- macOS traffic lights -->
-  <div style="display:flex;gap:7px;flex-shrink:0">
-    <span style="width:11px;height:11px;border-radius:6px;background:#ff5f57;display:block"></span>
-    <span style="width:11px;height:11px;border-radius:6px;background:#febc2e;display:block"></span>
-    <span style="width:11px;height:11px;border-radius:6px;background:#28c840;display:block"></span>
-  </div>
-
-  <!-- Logo -->
-  <a
-    href={`/${lang}/`}
-    style="
-      background:transparent;border:0;color:inherit;cursor:pointer;
-      font-family:inherit;font-size:12px;padding:4px 6px;
-      display:flex;gap:12px;align-items:center;text-decoration:none;
-    "
-  >
-    <span style="color:var(--ink);font-weight:600">hector</span>
-    <span style="color:var(--muted)">@portfolio</span>
-    <span style="opacity:.4">~/2026</span>
+<header class="nav">
+  <a href={`/${lang}/`} class="brand" aria-label={`Hector Almonte, ${t.nav.home}`}>
+    <Mark size={34} />
+    <span class="brand-name">Hector Almonte</span>
   </a>
 
-  <!-- Live dot -->
-  <span style="display:inline-flex;align-items:center;font-size:11px;color:var(--ink-soft)">
-    <span class="tm-live-dot"></span>{lang === 'es' ? 'activo' : 'live'}
-  </span>
-
-  <span style="flex:1"></span>
-
-  <!-- Desktop nav -->
-  <nav style="display:flex;gap:2px;font-size:12px" class="tm-desktop-nav">
-    {links.map(link => {
-      const on = currentPage === link.id || (link.id === '' && currentPage === '');
-      return (
-        <a
-          href={link.href}
-          class="nav-btn"
-          style={`
-            padding:5px 10px;border-radius:4px;font-family:inherit;font-size:12px;
-            background:${on ? '#a6f55b1a' : 'transparent'};
-            color:${on ? 'var(--accent)' : 'var(--ink-soft)'};
-            border:0;cursor:pointer;text-decoration:none;
-          `}
-        >
-          {link.label}
-        </a>
-      );
-    })}
-
-    <!-- Divider -->
-    <span style="width:1px;height:14px;background:var(--rule);margin:4px 6px;align-self:center"></span>
-
-    <!-- Language switcher -->
-    <a
-      href={alternatePath}
-      data-astro-reload
-      style="padding:5px 10px;color:var(--muted);background:transparent;border:0;cursor:pointer;font-family:inherit;font-size:12px;text-decoration:none"
-    >
-      <span style={`color:${lang === 'es' ? 'var(--accent)' : 'var(--muted)'}`}>es</span>
-      <span style="margin:0 4px;opacity:.4">/</span>
-      <span style={`color:${lang === 'en' ? 'var(--accent)' : 'var(--muted)'}`}>en</span>
-    </a>
-
-    <!-- CV download -->
-    <a
-      href={lang === 'es' ? '/hector-almonte-cv-es.pdf' : '/hector-almonte-cv-en.pdf'}
-      download
-      style="
-        padding:5px 10px;color:var(--bg);background:var(--accent);border-radius:4px;
-        font-weight:600;text-decoration:none;font-family:inherit;font-size:12px;
-      "
-    >
-      ↓ cv
-    </a>
+  <nav class="links" aria-label="Principal">
+    {links.map(l => (
+      <a href={l.href} aria-current={here === l.id ? 'page' : undefined}>{l.label}</a>
+    ))}
   </nav>
 
-  <!-- Mobile: lang + hamburger -->
-  <div class="tm-mobile-nav" style="display:none;align-items:center;gap:8px">
-    <a
-      href={alternatePath}
-      data-astro-reload
-      style="padding:4px 8px;border:1px solid var(--rule);border-radius:4px;font-size:11px;color:var(--muted);text-decoration:none"
-    >
-      {alternateLang}
+  <div class="tools">
+    <a href={altPath} class="lang" hreflang={alt} lang={alt} aria-label={t.common.langSwitch}>
+      <span class:list={{ on: lang === 'es' }}>ES</span>
+      <span class:list={{ on: lang === 'en' }}>EN</span>
     </a>
-    <button
-      id="menu-btn"
-      aria-label={lang === 'es' ? 'Menú' : 'Menu'}
-      style="padding:8px;background:transparent;border:0;color:var(--muted);cursor:pointer"
-    >
-      <svg id="icon-open" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-      </svg>
-      <svg id="icon-close" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none">
-        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-      </svg>
+    <a href={cvPath(lang)} download class="pill pill--dark cv">
+      <Icon name="download" size={16} />
+      {t.common.cvShort}
+    </a>
+    <button class="menu-btn" type="button" aria-label={t.common.menu} aria-controls="menu-sheet" aria-expanded="false" data-menu-open>
+      <Icon name="menu" size={22} />
     </button>
   </div>
 </header>
 
-<!-- Mobile menu -->
-<div
-  id="mobile-menu"
-  style="
-    display:none;
-    border-bottom:1px solid var(--rule);
-    background:var(--bg-dark);
-    padding:16px 28px;
-    flex-direction:column;
-    gap:4px;
-  "
->
-  {links.map(link => {
-    const on = currentPage === link.id || (link.id === '' && currentPage === '');
-    return (
-      <a
-        href={link.href}
-        style={`
-          padding:10px 12px;border-radius:4px;font-size:13px;text-decoration:none;
-          background:${on ? '#a6f55b1a' : 'transparent'};
-          color:${on ? 'var(--accent)' : 'var(--ink-soft)'};
-        `}
-      >
-        {on && <span style="margin-right:6px">{'>'}</span>}
-        {link.label}
-      </a>
-    );
-  })}
-  <a
-    href={lang === 'es' ? '/hector-almonte-cv-es.pdf' : '/hector-almonte-cv-en.pdf'}
-    download
-    style="margin-top:8px;padding:10px 12px;border-radius:4px;border:1px solid #a6f55b44;color:var(--accent);font-size:13px;text-decoration:none"
-  >
-    ↓ {lang === 'es' ? 'Descargar CV' : 'Download CV'}
-  </a>
-</div>
-
 <style>
-  @media (max-width: 768px) {
-    .tm-desktop-nav { display: none !important; }
-    .tm-mobile-nav  { display: flex !important; }
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: clamp(14px, 2.2vw, 28px) clamp(16px, 3vw, 40px);
+    color: var(--ink);
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    margin-right: auto;
+    border-radius: 999px;
+  }
+  .brand-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    padding-top: 0.2em;
+  }
+
+  .links { display: flex; gap: 4px; }
+  .links a {
+    position: relative;
+    padding: 10px 14px;
+    font-weight: 600;
+    font-size: 0.98rem;
+    text-decoration: none;
+    border-radius: 999px;
+    transition: background-color 200ms ease;
+  }
+  .links a::after {
+    content: '';
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 6px;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 240ms var(--ease-out);
+  }
+  .links a[aria-current='page']::after { transform: scaleX(1); }
+  @media (hover: hover) and (pointer: fine) {
+    .links a:hover::after { transform: scaleX(1); }
+  }
+
+  .tools { display: flex; align-items: center; gap: 10px; }
+  .lang {
+    display: inline-flex;
+    gap: 2px;
+    padding: 4px;
+    border-radius: 999px;
+    background: rgba(44, 15, 30, 0.08);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+  }
+  .lang span {
+    display: grid;
+    place-items: center;
+    min-width: 36px;
+    height: 32px;
+    border-radius: 999px;
+    color: var(--ink-soft);
+    transition: background-color 200ms ease, color 200ms ease;
+  }
+  .lang .on { background: var(--ink-on-dark); color: var(--ink); }
+  @media (hover: hover) and (pointer: fine) {
+    .lang:hover span:not(.on) { color: var(--ink); }
+  }
+
+  .cv { min-height: 42px; padding: 0.6em 1.1em; font-size: 0.92rem; }
+
+  .menu-btn {
+    display: none;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--night);
+    color: var(--ink-on-dark);
+    border: 0;
+    cursor: pointer;
+    transition: transform 160ms var(--ease-out);
+  }
+  .menu-btn:active { transform: scale(0.95); }
+
+  @media (max-width: 860px) {
+    .links, .cv { display: none; }
+    .menu-btn { display: grid; }
+  }
+  @media (max-width: 420px) {
+    .brand-name { display: none; }
   }
 </style>
-
-<script>
-  function initMenu() {
-    const btn       = document.getElementById('menu-btn');
-    const menu      = document.getElementById('mobile-menu');
-    const iconOpen  = document.getElementById('icon-open');
-    const iconClose = document.getElementById('icon-close');
-    if (!btn || !menu) return;
-
-    btn.addEventListener('click', () => {
-      const isOpen = menu.style.display === 'flex';
-      menu.style.display = isOpen ? 'none' : 'flex';
-      if (iconOpen)  iconOpen.style.display  = isOpen ? 'block' : 'none';
-      if (iconClose) iconClose.style.display = isOpen ? 'none'  : 'block';
-    });
-
-    menu.querySelectorAll('a').forEach(a =>
-      a.addEventListener('click', () => {
-        menu.style.display = 'none';
-        if (iconOpen)  iconOpen.style.display  = 'block';
-        if (iconClose) iconClose.style.display = 'none';
-      })
-    );
-  }
-
-  document.addEventListener('astro:page-load', initMenu);
-</script>

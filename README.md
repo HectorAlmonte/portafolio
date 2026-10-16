@@ -1,8 +1,8 @@
 # Hector Almonte — Portfolio
 
-Portafolio personal desarrollado con Astro 5, TailwindCSS y GSAP. Tema terminal/hacker con animaciones, soporte bilingüe ES/EN y formulario de contacto funcional.
+Portafolio personal de Hector Almonte, Desarrollador Full Stack en Ilo, Perú. Un paisaje ilustrado al atardecer, dibujado por capas en SVG, que se recorre de arriba hacia abajo: cielo, arena, bosque y noche.
 
-🌐 **Live:** [portafolio-eight-self-36.vercel.app](https://portafolio-eight-self-36.vercel.app)
+🌐 **Live:** [hectoralmonte.com](https://hectoralmonte.com)
 
 ---
 
@@ -10,33 +10,23 @@ Portafolio personal desarrollado con Astro 5, TailwindCSS y GSAP. Tema terminal/
 
 | Capa | Tecnología |
 |------|-----------|
-| Framework | Astro 5 |
-| Estilos | TailwindCSS 3 |
-| Animaciones | GSAP 3 + ScrollTrigger |
-| Contacto | EmailJS |
-| i18n | ES / EN (rutas dinámicas) |
+| Framework | Astro 5 (estático) |
+| Estilos | CSS propio con tokens + Tailwind (reset y utilidades) |
+| Paisaje | SVG por capas generado en build (`src/lib/scene.ts`) |
+| Contacto | Web3Forms |
+| SEO | Sitemap, hreflang ES/EN, Open Graph (`public/og.png`) |
+| i18n | ES / EN (rutas `/es/` y `/en/`) |
 | Deploy | Vercel |
-
----
 
 ## Características
 
-- **Matrix rain** en el Hero con canvas animado
-- **Typewriter** secuencial en la terminal del Hero
-- **Timeline** de experiencia con animaciones GSAP
-- **Skill grid** estilo `ls` de terminal
-- **Stats** con contadores animados
-- **Scroll animations** con Intersection Observer
-- **Glitch hover** en tarjetas de proyectos
-- **View Transitions** entre páginas (Astro nativo)
-- **Navbar móvil** con menú hamburger
-- **Formulario de contacto** funcional con EmailJS
-- **CV descargable** en PDF
-- **Página 404** con terminal animada
-- **Open Graph** para redes sociales
-- Bilingüe **ES / EN**
+- **Escena con parallax:** cada capa (sol, picos, crestas, bosques) se desplaza a su propia profundidad al hacer scroll; el titular vive entre las capas.
+- **Bosques deterministas:** las líneas de árboles se generan en build con semillas fijas, sin imágenes pesadas.
+- **Secciones que descienden** por el paisaje, unidas por siluetas (colinas, picos, árboles).
+- **Respeta `prefers-reduced-motion`.**
+- Menú móvil a pantalla completa, atajos de teclado (`?`), formulario de contacto con validación, CV descargable en ES/EN.
 
----
+El sistema de diseño está documentado en [DESIGN.md](DESIGN.md) y el contexto de producto en [PRODUCT.md](PRODUCT.md).
 
 ## Correr en local
 
@@ -47,46 +37,23 @@ npm run dev
 
 Disponible en [http://localhost:4321](http://localhost:4321)
 
----
-
-## Deploy
-
-```bash
-npm run build   # genera dist/
-```
-
-Desplegado automáticamente en Vercel con cada push a `main`.
-
----
-
 ## Estructura
 
 ```
 src/
 ├── components/
-│   ├── Hero.astro        # Terminal con Matrix rain + typewriter
-│   ├── Experience.astro  # Timeline de experiencia
-│   ├── Stats.astro       # Contadores animados
-│   ├── ProjectCard.astro # Tarjeta con glitch hover
-│   ├── Navbar.astro      # Nav responsive con CV download
-│   └── Footer.astro
-├── pages/
-│   ├── index.astro       # Redirect a /es/
-│   ├── 404.astro         # Página 404 terminal
-│   └── [lang]/           # Rutas ES/EN
-│       ├── index.astro
-│       ├── about.astro
-│       ├── projects.astro
-│       └── contact.astro
-├── i18n/
-│   ├── translations.ts   # Textos ES/EN
-│   └── utils.ts
-├── layouts/
-│   └── Layout.astro      # Layout base con OG + ViewTransitions
-└── styles/
-    └── global.css
+│   ├── Scene.astro       # Paisaje por capas + parallax (hero y franjas)
+│   ├── Ridge.astro       # Silueta que une dos secciones
+│   ├── Navbar.astro      # Navegación dentro de la escena
+│   ├── MobileMenu.astro  # Menú móvil a pantalla completa
+│   ├── ProjectRows.astro # Lista de proyectos
+│   ├── Timeline.astro    # Trayectoria
+│   ├── Footer.astro      # Noche estrellada + llamado a contacto
+│   ├── Icon.astro / Mark.astro
+├── data/                 # projects.ts, experience.ts
+├── i18n/                 # translations.ts, utils.ts (URLs del sitio, links)
+├── lib/scene.ts          # Generadores de árboles y colinas
+├── layouts/Layout.astro  # SEO, fuentes, atajos, revelado al scroll
+├── pages/                # /[lang]/, about, projects, projects/[slug], contact, 404
+└── styles/global.css     # Tokens de color, tipografía y movimiento
 ```
-
----
-
-Hecho con Astro + TailwindCSS + GSAP

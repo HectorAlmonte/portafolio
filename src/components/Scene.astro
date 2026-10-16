@@ -1,0 +1,318 @@
+---
+// Layered sunset landscape. Every layer is its own SVG so the title can sit
+// between them and each layer can drift at its own depth.
+import { treeline } from '../lib/scene';
+import Navbar from './Navbar.astro';
+import { type Lang } from '../i18n/translations';
+
+interface Props {
+  lang: Lang;
+  variant?: 'hero' | 'band';
+  /** one entry per line of the display title */
+  title: string[];
+  /** the title is decorative when the page already has an h1 elsewhere */
+  titleTag?: 'h1' | 'p';
+  seed?: number;
+}
+
+const { lang, variant = 'hero', title, titleTag = 'h1', seed = 7 } = Astro.props;
+const Title = titleTag;
+const hero = variant === 'hero';
+// cap the size so the longest line always fits the frame width
+const longest = Math.max(...title.map(l => l.length));
+const fit = `${(60 / (longest * 0.8)).toFixed(2)}cqw`;
+const fitSm = `${(100 / (longest * 0.8)).toFixed(2)}cqw`;
+
+const VB = '0 0 1440 900';
+
+const ridge   = treeline({ seed: seed + 1, base: 610, swell: 22, floor: 960, minH: 16, maxH: 38, gap: 13 });
+const forest1 = treeline({ seed: seed + 2, base: 650, swell: 26, floor: 960, minH: 38, maxH: 86, gap: 21 });
+const forest2 = treeline({ seed: seed + 3, base: 700, swell: 30, floor: 960, minH: 66, maxH: 138, gap: 29 });
+const forest3 = treeline({ seed: seed + 4, base: 772, swell: 26, floor: 960, minH: 108, maxH: 228, gap: 40, density: 0.85 });
+const forest4 = treeline({
+  seed: seed + 5, base: 860, swell: 18, floor: 960, minH: 170, maxH: 330, gap: 58, density: 0.8,
+  clearing: hero ? [-200, 560] : [380, 1060],
+});
+
+const cloud = 'M0,40a20,20 0 0 1 30,-18a28,28 0 0 1 52,-8a22,22 0 0 1 38,14a16,16 0 0 1 12,12Z';
+const birdBig =
+  'M8,56L30,46C44,42 52,40 60,38C56,26 50,14 40,2C58,10 70,22 74,34C80,30 88,26 96,26L104,24L112,27L104,30' +
+  'C98,34 92,38 84,42C74,48 60,52 44,54C36,56 24,58 8,56ZM66,40C76,48 84,58 96,68C82,62 70,54 60,46Z';
+const birdSmall = 'M0,6Q5,0 10,5Q15,0 20,6Q15,3 10,8Q5,3 0,6Z';
+const flock = hero
+  ? [[0, 0, 1], [38, 14, 0.8], [70, -6, 0.9], [104, 22, 0.7], [140, 6, 0.6]]
+  : [[0, 0, 1], [36, 12, 0.8], [66, -4, 0.7]];
+---
+
+<section class:list={['scene', `scene--${variant}`]} data-scene>
+  <div class="scene-frame">
+    <svg class="layer sun-layer" data-depth="0.45" viewBox={VB} preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <defs>
+        <radialGradient id="sun-glow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#fff1cf" stop-opacity="0.95" />
+          <stop offset="0.35" stop-color="#fde0ae" stop-opacity="0.55" />
+          <stop offset="1" stop-color="#f8c49a" stop-opacity="0" />
+        </radialGradient>
+      </defs>
+      <circle cx="1000" cy="372" r="340" fill="url(#sun-glow)" />
+      <circle cx="1000" cy="372" r="96" fill="var(--sun)" />
+    </svg>
+
+
+    <svg class="layer" data-depth="0.3" viewBox={VB} preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <path fill="var(--peak)" d="M-40,640L110,540L220,488L320,380L405,268L468,205L524,262L570,306L646,388L716,430L780,470L860,512L960,470L1060,410L1126,372L1180,336L1236,380L1300,428L1380,470L1480,520L1480,960L-40,960Z" />
+      <path fill="var(--peak-lit)" d="M468,205L405,268L320,380L362,392L388,350L420,398L446,318L462,352Z" />
+      <path fill="var(--peak-lit)" d="M1180,336L1126,372L1060,410L1100,420L1124,394L1146,428L1168,372Z" />
+      <path fill="#fbd3b3" d="M468,205L448,226L458,232L470,214L484,236L496,226Z" />
+    </svg>
+
+    <svg class="layer" data-depth="0.27" viewBox={VB} preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <g class="drift drift--slow">
+        <g transform="translate(260 300) scale(1.1)">
+          <path d={cloud} fill="var(--cloud-shade)" transform="translate(6 9)" />
+          <path d={cloud} fill="var(--cloud)" />
+        </g>
+        <g transform="translate(1120 240) scale(1.6)">
+          <path d={cloud} fill="var(--cloud-shade)" transform="translate(6 9)" />
+          <path d={cloud} fill="var(--cloud)" />
+        </g>
+      </g>
+    </svg>
+
+    <svg class="layer" data-depth="0.22" viewBox={VB} preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <path fill="var(--ridge)" d={ridge} />
+    </svg>
+    <svg class="layer" data-depth="0.16" viewBox={VB} preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <path fill="var(--forest-1)" d={forest1} />
+    </svg>
+    <svg class="layer" data-depth="0.1" viewBox={VB} preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <path fill="var(--forest-2)" d={forest2} />
+    </svg>
+
+    <div class="scene-title layer" data-depth="0.12" style={`--fit:${fit};--fit-sm:${fitSm}`}>
+      <Title class="display">
+        {title.map((line, i) => <span class="line" style={`--l:${i}`}>{line}</span>)}
+      </Title>
+    </div>
+
+    <svg class="layer" data-depth="0.05" viewBox={VB} preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <path fill="var(--forest-3)" d={forest3} />
+    </svg>
+    <svg class="layer" data-depth="0" viewBox={VB} preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <path fill="var(--forest-4)" d={forest4} />
+      <path fill="var(--night)" d="M-40,880C300,850 520,870 760,862C1000,854 1200,872 1480,860L1480,960L-40,960Z" />
+    </svg>
+
+    <svg class="layer flock" data-depth="0.2" viewBox={VB} preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <g class="glide">
+        {flock.map(([x, y, s]) => (
+          <path d={birdSmall} fill="var(--forest-4)" transform={`translate(${620 + x} ${hero ? 330 + y : 380 + y}) scale(${1.4 * s})`} />
+        ))}
+      </g>
+    </svg>
+
+    <div class="scene-ui">
+      <Navbar lang={lang} />
+      <slot />
+    </div>
+  </div>
+
+  {hero && (
+    <div class="outside" aria-hidden="true">
+      <svg class="outside-cloud drift drift--slow" viewBox="-10 -30 160 90">
+        <path d={cloud} fill="var(--cloud-shade)" transform="translate(5 8)" />
+        <path d={cloud} fill="var(--cloud)" />
+      </svg>
+      <svg class="outside-bird hover" viewBox="0 0 120 72">
+        <path d={birdBig} fill="var(--night)" />
+      </svg>
+    </div>
+  )}
+</section>
+
+<style>
+  .scene {
+    position: relative;
+    padding: clamp(8px, 1.6vw, 22px);
+    padding-bottom: 0;
+  }
+  .scene-frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: clamp(18px, 2.4vw, 34px);
+    background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 42%, var(--sky-low) 70%);
+    container-type: size;
+    /* px per viewBox unit for an xMidYMax slice of 1440x900 */
+    --u: max((100cqw + 48px) / 1440, 100cqh / 900);
+    isolation: isolate;
+  }
+  .scene--hero .scene-frame {
+    height: calc(100svh - clamp(8px, 1.6vw, 22px));
+    min-height: 560px;
+    max-height: 1100px;
+  }
+  .scene--band .scene-frame {
+    height: clamp(400px, 62svh, 640px);
+  }
+
+  .layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    will-change: transform;
+  }
+  svg.layer { inset: 0 -24px; width: calc(100% + 48px); }
+  /* the short band drops the scene so the peaks and sky stay in frame */
+  .scene--band svg.layer { top: calc(var(--u) * 150); bottom: auto; }
+
+  .scene-title {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .scene-title :global(.display) {
+    margin: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: var(--ink-on-dark);
+    text-shadow: 0 2px 28px rgba(110, 38, 56, 0.45);
+  }
+  .scene--hero .scene-title :global(.display) {
+    bottom: calc(var(--u) * 345);
+    font-size: min(calc(var(--u) * 122), var(--fit), 9.5rem);
+  }
+  .scene--band .scene-title :global(.display) {
+    bottom: calc(var(--u) * 175);
+    font-size: min(calc(var(--u) * 120), var(--fit), 8.5rem);
+  }
+  .line { display: block; }
+
+  .scene-ui {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+  }
+  .scene-ui > :global(*) { pointer-events: auto; }
+
+  /* pieces that break out of the frame */
+  .outside { position: absolute; inset: 0; pointer-events: none; z-index: 3; }
+  .outside-cloud {
+    position: absolute;
+    width: clamp(150px, 22vw, 340px);
+    left: clamp(-30px, -1vw, 0px);
+    top: clamp(-6px, 2vw, 24px);
+  }
+  .outside-bird {
+    position: absolute;
+    width: clamp(110px, 15vw, 230px);
+    right: clamp(14px, 6vw, 110px);
+    top: clamp(84px, 11vw, 170px);
+  }
+
+  /* ambient motion: constant, so linear or a soft sine */
+  .drift--slow { animation: drift 38s ease-in-out infinite alternate; }
+  .glide { animation: glide 46s linear infinite; }
+  .hover { animation: hover 7s ease-in-out infinite alternate; }
+
+  @keyframes drift { to { transform: translateX(46px); } }
+  @keyframes glide {
+    from { transform: translate(-900px, 40px); }
+    to   { transform: translate(900px, -60px); }
+  }
+  @keyframes hover {
+    from { transform: translateY(0) rotate(0deg); }
+    to   { transform: translateY(-14px) rotate(-3deg); }
+  }
+
+  /* the title rises out of the trees once, on first paint */
+  .scene--hero .line {
+    animation: rise 1100ms var(--ease-out) both;
+    animation-delay: calc(150ms + var(--l) * 90ms);
+  }
+  @keyframes rise {
+    from { transform: translateY(0.35em); opacity: 0; filter: blur(6px); }
+  }
+
+  @media (max-width: 640px) {
+    .scene--hero .scene-frame { height: min(88svh, 700px); min-height: 580px; }
+    .scene--hero .scene-title :global(.display) {
+      bottom: auto;
+      top: 25%;
+      font-size: min(calc(var(--u) * 122), var(--fit-sm));
+    }
+    .scene--band .scene-title :global(.display) { font-size: min(calc(var(--u) * 120), var(--fit-sm)); }
+    .scene--band .scene-frame { height: 360px; }
+    /* narrow frames crop the sides: pull the peak and the sun into view */
+    /* a wider box shifts the xMid anchor: content moves by half the extra width */
+    .scene--hero svg.layer { width: calc(100% + 188px); }
+    .scene--hero svg.sun-layer { left: -164px; }
+    .outside-cloud { display: none; }
+    .outside-bird { width: 92px; right: 18px; top: 112px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .drift--slow, .glide, .hover { animation: none; }
+    .glide { transform: translate(-120px, 0); }
+    .scene--hero .line { animation: fade 400ms ease both; }
+    @keyframes fade { from { opacity: 0; } }
+  }
+</style>
+
+<script>
+  const scene = document.querySelector<HTMLElement>('[data-scene]');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (scene && !reduce) {
+    const frame = scene.querySelector<HTMLElement>('.scene-frame')!;
+    const layers = [...scene.querySelectorAll<HTMLElement>('[data-depth]')].map(el => ({
+      el,
+      d: Number(el.dataset.depth),
+    }));
+    const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    let targetX = 0;
+    let currentX = 0;
+    let raf = 0;
+    let inView = true;
+
+    const render = () => {
+      raf = 0;
+      currentX += (targetX - currentX) * 0.08;
+      const y = Math.min(window.scrollY, frame.offsetHeight);
+      for (const { el, d } of layers) {
+        // transform on each layer directly: no inherited custom property recalc
+        el.style.transform = `translate3d(${(-currentX * d * 70).toFixed(2)}px, ${(y * d).toFixed(2)}px, 0)`;
+      }
+      if (Math.abs(targetX - currentX) > 0.0005) schedule();
+    };
+    const schedule = () => {
+      if (!raf && inView) raf = requestAnimationFrame(render);
+    };
+
+    new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      if (inView) schedule();
+    }).observe(frame);
+
+    window.addEventListener('scroll', schedule, { passive: true });
+    if (finePointer) {
+      frame.addEventListener('pointermove', e => {
+        const r = frame.getBoundingClientRect();
+        targetX = (e.clientX - r.left) / r.width - 0.5;
+        schedule();
+      });
+      frame.addEventListener('pointerleave', () => {
+        targetX = 0;
+        schedule();
+      });
+    }
+    schedule();
+  }
+</script>

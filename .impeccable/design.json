@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-16T13:40:00Z",
+  "title": "Design System: Hector Almonte Portfolio",
+  "extensions": {
+    "colorMeta": {
+      "night": { "role": "primary", "displayName": "Plum Night", "canonical": "#2c0f1e" },
+      "rust": { "role": "primary", "displayName": "Rust Forest", "canonical": "#9c3b36" },
+      "accent": { "role": "secondary", "displayName": "Ember Coral", "canonical": "#c4544a" },
+      "cream": { "role": "neutral", "displayName": "Cream Sky", "canonical": "#fbe9d2" },
+      "sand": { "role": "neutral", "displayName": "Desert Sand", "canonical": "#f6c69a" }
+    },
+    "shadows": {
+      "headline-glow": "0 2px 28px rgba(110, 38, 56, 0.45)",
+      "screen": "0 24px 48px -16px rgba(44, 15, 30, 0.45)",
+      "dialog": "0 24px 64px rgba(44, 15, 30, 0.35)"
+    },
+    "motion": {
+      "ease-out": "cubic-bezier(0.23, 1, 0.32, 1)",
+      "ease-in-out": "cubic-bezier(0.77, 0, 0.175, 1)",
+      "press": "transform 160ms var(--ease-out); scale(0.97)",
+      "reveal": "opacity/transform 700ms var(--ease-out), 60ms stagger",
+      "parallax": "translate3d by depth x scroll; pointer drift eased at 0.08 per frame"
+    },
+    "breakpoints": { "sm": "640px", "nav": "860px", "md": "900px" },
+    "components": {
+      "button-dark": "<a class=\"pill pill--dark\">Ver proyectos</a>",
+      "button-light": "<a class=\"pill pill--light\">Descargar CV</a>",
+      "button-ghost": "<a class=\"pill pill--ghost\">GitHub</a>",
+      "chip": "<span class=\"chip\">TypeScript</span>"
+    },
+    "narrative": {
+      "northStar": "The Golden Hour Trail",
+      "overview": "A flat, layered sunset landscape poster you scroll down through: sky, sand, forest and night, with the headline living between the layers.",
+      "keyCharacteristics": [
+        "Flat vector silhouettes",
+        "Warm-to-dark descent down the page",
+        "Uppercase geometric display over a humanist body",
+        "Pill controls",
+        "One authored motion moment: depth parallax"
+      ],
+      "rules": ["The Descent Rule", "The Silhouette Seam Rule", "The No-Eyebrow Rule"]
+    }
+  }
+}

@@ -1,0 +1,45 @@
+---
+// The silhouette edge where one band of the page meets the next.
+// It is drawn in the color of the band below and sits on top of the band above.
+import { hills, treeline } from '../lib/scene';
+
+interface Props {
+  /** color of the band this edge belongs to (the one below) */
+  fill: string;
+  shape?: 'hills' | 'trees' | 'peaks';
+  seed?: number;
+  flip?: boolean;
+}
+
+const { fill, shape = 'hills', seed = 11, flip = false } = Astro.props;
+
+const d =
+  shape === 'trees'
+    ? treeline({ seed, base: 120, swell: 10, floor: 160, minH: 28, maxH: 96, gap: 22, density: 0.85 })
+    : shape === 'peaks'
+      ? 'M0,160L0,118L120,96L210,58L280,84L360,40L430,74L540,92L640,62L720,28L790,64L880,86L990,70L1080,36L1150,70L1260,92L1360,80L1440,104L1440,160Z'
+      : hills(seed, 1440, 160, 30);
+---
+
+<div class="ridge" aria-hidden="true" style={`color:${fill}`}>
+  <svg viewBox="0 0 1440 160" preserveAspectRatio="none" style={flip ? 'transform:scaleX(-1)' : undefined}>
+    <path fill="currentColor" d={d} />
+  </svg>
+</div>
+
+<style>
+  .ridge {
+    position: relative;
+    height: clamp(56px, 8vw, 120px);
+    margin-top: calc(-1 * clamp(56px, 8vw, 120px) + 1px);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .ridge svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+</style>
