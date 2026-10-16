@@ -8,9 +8,9 @@ export default defineConfig({
     tailwind(),
     sitemap({
       filter: page => page !== 'https://hectoralmonte.com/',
-      // match the canonical URLs: no trailing slash except the language homes
+      // match the canonical URLs: Vercel serves them without a trailing slash
       serialize: item => {
-        const clean = url => (/\/(es|en)\/$/.test(url) ? url : url.replace(/\/$/, ''));
+        const clean = url => url.replace(/\/$/, '');
         item.url = clean(item.url);
         item.links = item.links?.map(l => ({ ...l, url: clean(l.url) }));
         return item;

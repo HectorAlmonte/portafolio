@@ -15,10 +15,11 @@ interface Props {
 const { title, description, lang, footerCta = true } = Astro.props;
 const t = useTranslations(lang);
 
-const path      = Astro.url.pathname.replace(/\/$/, '') || '/';
-const canonical = new URL(path === `/${lang}` ? `/${lang}/` : path, SITE).href;
-const altEs     = new URL(getLocalizedPath(Astro.url.pathname, 'es'), SITE).href;
-const altEn     = new URL(getLocalizedPath(Astro.url.pathname, 'en'), SITE).href;
+// Vercel serves URLs without a trailing slash (vercel.json), so canonicals match that
+const noSlash   = (p: string) => p.replace(/\/$/, '') || '/';
+const canonical = new URL(noSlash(Astro.url.pathname), SITE).href;
+const altEs     = new URL(noSlash(getLocalizedPath(Astro.url.pathname, 'es')), SITE).href;
+const altEn     = new URL(noSlash(getLocalizedPath(Astro.url.pathname, 'en')), SITE).href;
 const ogTitle   = title === 'Hector Almonte' ? title : `${title} | Hector Almonte`;
 const ogDesc    = description ?? t.meta.defaultDesc;
 const ogImage   = `${SITE}/og.png`;
