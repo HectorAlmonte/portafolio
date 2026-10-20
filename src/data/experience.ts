@@ -16,7 +16,19 @@ export const experience = {
         tags: ['Next.js', 'TypeScript', 'PostgreSQL', 'Docker', 'PWA'],
       },
       {
-        role: 'Programador Full Stack',
+        role: 'Desarrollador Full Stack Freelance',
+        org: 'Independiente',
+        mode: 'Remoto',
+        period: 'Mar 2025 — Nov 2025',
+        duration: '9 meses',
+        bullets: [
+          'Desarrollé aplicaciones web a medida para clientes, desde la especificación hasta el despliegue.',
+          'Construí gre-materiales, una PWA offline para consultar los 2,661 materiales de la guía GRE 2024, con OCR de etiquetas por cámara.',
+        ],
+        tags: ['Next.js', 'TypeScript', 'PostgreSQL', 'Tesseract.js', 'PWA'],
+      },
+      {
+        role: 'Desarrollador Full Stack',
         org: 'Agrosoft',
         mode: 'Trabajo Remoto',
         period: 'Dic 2021 — Feb 2025',
@@ -59,7 +71,19 @@ export const experience = {
         tags: ['Next.js', 'TypeScript', 'PostgreSQL', 'Docker', 'PWA'],
       },
       {
-        role: 'Full Stack Programmer',
+        role: 'Freelance Full Stack Developer',
+        org: 'Self-employed',
+        mode: 'Remote',
+        period: 'Mar 2025 — Nov 2025',
+        duration: '9 months',
+        bullets: [
+          'Built custom web applications for clients, from specification to deployment.',
+          'Built gre-materiales, an offline PWA to look up the 2,661 materials in the ERG 2024 guide, with camera OCR of hazard labels.',
+        ],
+        tags: ['Next.js', 'TypeScript', 'PostgreSQL', 'Tesseract.js', 'PWA'],
+      },
+      {
+        role: 'Full Stack Developer',
         org: 'Agrosoft',
         mode: 'Remote Work',
         period: 'Dec 2021 — Feb 2025',
